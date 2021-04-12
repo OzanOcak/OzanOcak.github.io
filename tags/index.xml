@@ -5,6 +5,34 @@
     <link>https://bitsandbytes.github.io/tags/</link>
     <description>Recent content in Tags on Warm journeys of bits and bytes</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://bitsandbytes.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Mon, 12 Apr 2021 00:05:06 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>git</title>
+      <link>https://bitsandbytes.github.io/tags/git/</link>
+      <pubDate>Mon, 12 Apr 2021 00:05:06 -0400</pubDate>
+      
+      <guid>https://bitsandbytes.github.io/tags/git/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hugo</title>
+      <link>https://bitsandbytes.github.io/tags/hugo/</link>
+      <pubDate>Mon, 12 Apr 2021 00:05:06 -0400</pubDate>
+      
+      <guid>https://bitsandbytes.github.io/tags/hugo/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>website</title>
+      <link>https://bitsandbytes.github.io/tags/website/</link>
+      <pubDate>Mon, 12 Apr 2021 00:05:06 -0400</pubDate>
+      
+      <guid>https://bitsandbytes.github.io/tags/website/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>

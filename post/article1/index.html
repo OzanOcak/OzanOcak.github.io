@@ -25,6 +25,8 @@
             </div>
             <div class="flex">
                 
+                <a href="/about/">About</a>
+                
                 <button id="dark-mode-button"></button>
             </div>
             </div>
@@ -41,9 +43,15 @@
                     <h1>How did I build this website?</h1>
                     <div class="post-meta">
                         <div>
-                            By  on <time>April 12, 2021</time>
+                            By ozan ocak on <time>April 12, 2021</time>
                         </div>
                         <div class="tags">
+                            
+                            <a href="/tags/hugo/">hugo</a>
+                            
+                            <a href="/tags/website/">website</a>
+                            
+                            <a href="/tags/git/">git</a>
                             
                         </div>
                     </div>
@@ -55,61 +63,132 @@
     <div class="article-post">
     <p>Hugo is a static HTML and CSS website generator written in Go. It is optimized for speed, ease of use, and configurability. Hugo takes a directory with content and templates and renders them into a full HTML website.</p>
 <p>I chose Hugo to this blog and store it in github as a static page. First I install hugo with brew then create 2 seperate github repository; one for all the source codes and the other for staic files in public folder.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
-brew  install hugo
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">brew  install hugo
 
 hugo new site my_blog
+</code></pre></td></tr></table>
+</div>
+</div><p>After Hugo set up initial folders and files, I wanted fetch one of hugo theme with git submodule. Git submodules allow you to keep a git repository as a subdirectory of another git repository.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">git init .
 
-</code></pre></div><p>After Hugo set up initial folders and files, I wanted fetch one of hugo theme with git submodule. Git submodules allow you to keep a git repository as a subdirectory of another git repository.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
-git init .
-
-cd my_blog/themes 
+<span class="nb">cd</span> my_blog/themes 
 
 git submodule add https://github.com/WingLim/hugo-tania
-
-</code></pre></div><p>Hugo uses the config.toml, config.yaml, or config.json as the default site config file. I prefred to use toml which is another file format for configuration files.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
-mv config.toml config.yaml
+</code></pre></td></tr></table>
+</div>
+</div><p>Hugo uses the config.toml, config.yaml, or config.json as the default site config file. I prefred to use toml which is another file format for configuration files.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">mv config.toml config.yaml
 
 vim config.yaml 
 
-baseURL: <span style="color:#e6db74">&#34;https://bitsandbytes.github.io&#34;</span>
-languageCode: <span style="color:#e6db74">&#34;en-us&#34;</span>
-title: <span style="color:#e6db74">&#34;fascinating journey of bits and bytes&#34;</span>
-theme: <span style="color:#e6db74">&#34;hugo-tania&#34;</span>
-
-</code></pre></div><p>Now I can start deamon process to serve the website in localhost thanks to golang.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
-hugo server
+baseURL: <span class="s2">&#34;https://bitsandbytes.github.io&#34;</span>
+languageCode: <span class="s2">&#34;en-us&#34;</span>
+title: <span class="s2">&#34;fascinating journey of bits and bytes&#34;</span>
+theme: <span class="s2">&#34;hugo-tania&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Now I can start deamon process to serve the website in localhost thanks to golang.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">hugo server
 
 hugo new post/hello.md
 
 git clone ozanocak.github.io.git
 
-git checkout -b main <span style="color:#f92672">(</span>now it is master branch<span style="color:#f92672">)</span>
-
-</code></pre></div><p>Checking out main branch in cloned git repository makes it master page so I don&rsquo;t need to explicitly add remote connection to the repository.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
-touch readme.md 
+git checkout -b main <span class="o">(</span>now it is master branch<span class="o">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Checking out main branch in cloned git repository makes it master page so I don&rsquo;t need to explicitly add remote connection to the repository.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">touch readme.md 
 git add . 
-git commit -m <span style="color:#e6db74">&#34;readme.md&#34;</span>
+git commit -m <span class="s2">&#34;readme.md&#34;</span>
 push -u origin main
 
 git submodule  add -b main ozanocak.github.io.git public
 
 hugo -t hugo-tania
-
-</code></pre></div><p>when I cd public &amp; git remote -v , I see origin is the host directory because I branched&amp;pushed it already to the repository.Finaly I can add changes git.</p>
+</code></pre></td></tr></table>
+</div>
+</div><p>when I cd public &amp; git remote -v , I see origin is the host directory because I branched&amp;pushed it already to the repository.Finaly I can add changes git.</p>
 <p>When I need to update the website, I need to go to directory where yaml config file located to generate updated binary files  and push the changes to github page.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
-hugo
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">hugo
 git status
 git add .
-git commit -m <span style="color:#e6db74">&#34;some changes&#34;</span>
+git commit -m <span class="s2">&#34;some changes&#34;</span>
 push -u origin main
-
-</code></pre></div>
+</code></pre></td></tr></table>
+</div>
+</div><p>To see the changes in local host we need to use -D flag because the files as default are draft which are not appear in localhost.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">hugo new about.md
+hugo server -D
+</code></pre></td></tr></table>
+</div>
+</div>
     </div>
 </div>
 
@@ -129,6 +208,8 @@ push -u origin main
         <footer class="footer flex">
     <section class="container">
         <nav class="footer-links">
+            
+            <a href="https://github.com/OzanOcak">Github</a>
             
         </nav>
     </section>

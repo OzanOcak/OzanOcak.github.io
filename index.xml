@@ -10,6 +10,29 @@
 
     
       <item>
+        <title>Articles</title>
+        <link>https://bitsandbytes.github.io/articles/</link>
+        <pubDate>Mon, 12 Apr 2021 15:23:57 -0400</pubDate>
+        
+        <guid>https://bitsandbytes.github.io/articles/</guid>
+        <description>
+          
+        </description>
+      </item>
+    
+      <item>
+        <title>About</title>
+        <link>https://bitsandbytes.github.io/about/</link>
+        <pubDate>Mon, 12 Apr 2021 14:02:44 -0400</pubDate>
+        <author>ozan ocak</author>
+        <guid>https://bitsandbytes.github.io/about/</guid>
+        <description>
+          &lt;p&gt;Hi, my name is ozan ocak, I am a programmer. I have had work experience in front-end web development, particularly in javascript. I decided to build this website as a hobby to studying and taking notes about other things about programming rather than web development.&lt;/p&gt;
+
+        </description>
+      </item>
+    
+      <item>
         <title>Posts</title>
         <link>https://bitsandbytes.github.io/post/</link>
         <pubDate>Mon, 12 Apr 2021 00:05:06 -0400</pubDate>

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="theme-color" content="dark">
-    <title> Hello | Warm journeys of bits and bytes</title>
+    <title> How did I build this website? | Warm journeys of bits and bytes</title>
     
     
     
@@ -38,7 +38,7 @@
         <header class="article-header">
             <div class="thumb">
                 <div>
-                    <h1>Hello</h1>
+                    <h1>How did I build this website?</h1>
                     <div class="post-meta">
                         <div>
                             By  on <time>April 12, 2021</time>
@@ -53,41 +53,61 @@
     </article>
 
     <div class="article-post">
-    <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
+    <p>Hugo is a static HTML and CSS website generator written in Go. It is optimized for speed, ease of use, and configurability. Hugo takes a directory with content and templates and renders them into a full HTML website.</p>
+<p>I chose Hugo to this blog and store it in github as a static page. First I install hugo with brew then create 2 seperate github repository; one for all the source codes and the other for staic files in public folder.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
 brew  install hugo
 
-Create <span style="color:#ae81ff">2</span> GitHub repository
+hugo new site my_blog
 
-Create new folder &amp; hugo new site my_blog
+</code></pre></div><p>After Hugo set up initial folders and files, I wanted fetch one of hugo theme with git submodule. Git submodules allow you to keep a git repository as a subdirectory of another git repository.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
+git init .
 
-cd themes &amp; git submodule add https://github.com/WingLim/hugo-tania
+cd my_blog/themes 
 
-config.toml 
+git submodule add https://github.com/WingLim/hugo-tania
 
-baseURL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;https://bitsandbytes.github.io&#34;</span>
-languageCode <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;en-us&#34;</span>
-title <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;fascinating journey of bits and bytes&#34;</span>
-theme <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hugo-tania&#34;</span>
+</code></pre></div><p>Hugo uses the config.toml, config.yaml, or config.json as the default site config file. I prefred to use toml which is another file format for configuration files.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
+mv config.toml config.yaml
 
+vim config.yaml 
+
+baseURL: <span style="color:#e6db74">&#34;https://bitsandbytes.github.io&#34;</span>
+languageCode: <span style="color:#e6db74">&#34;en-us&#34;</span>
+title: <span style="color:#e6db74">&#34;fascinating journey of bits and bytes&#34;</span>
+theme: <span style="color:#e6db74">&#34;hugo-tania&#34;</span>
+
+</code></pre></div><p>Now I can start deamon process to serve the website in localhost thanks to golang.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
 hugo server
 
 hugo new post/hello.md
 
-Turn config.toml to yams
-
-git clone &lt;the host repository.git&gt;
+git clone ozanocak.github.io.git
 
 git checkout -b main <span style="color:#f92672">(</span>now it is master branch<span style="color:#f92672">)</span>
 
-touch readme.md $ git add/ commit/push -u origin main
+</code></pre></div><p>Checking out main branch in cloned git repository makes it master page so I don&rsquo;t need to explicitly add remote connection to the repository.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
+touch readme.md 
+git add . 
+git commit -m <span style="color:#e6db74">&#34;readme.md&#34;</span>
+push -u origin main
 
-git submodule  add -b main &lt;the host repository.git&gt; public
+git submodule  add -b main ozanocak.github.io.git public
 
 hugo -t hugo-tania
 
-cd public &amp; git remote -v <span style="color:#f92672">(</span>origin is the host dir cuz we branched&amp;pushed it<span style="color:#f92672">)</span>
-
--then add&amp;commit&amp;push them GitHub
+</code></pre></div><p>when I cd public &amp; git remote -v , I see origin is the host directory because I branched&amp;pushed it already to the repository.Finaly I can add changes git.</p>
+<p>When I need to update the website, I need to go to directory where yaml config file located to generate updated binary files  and push the changes to github page.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
+hugo
+git status
+git add .
+git commit -m <span style="color:#e6db74">&#34;some changes&#34;</span>
+push -u origin main
 
 </code></pre></div>
     </div>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title> Writing a simple Linux Kernel | Warm journeys of bits and bytes</title>
+    
+    
+    
+    <link rel="stylesheet" href="/sass/main.min.1a3290acca8b3fc92df85ea9200859476d6c80d59009c89a749300f3ce7a7a67.css">
+</head>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="flex">
+            <div>
+                <a class="brand" href="/">
+                    
+                    Warm journeys of bits and bytes
+                    </a>
+            </div>
+            <div class="flex">
+                
+                <a href="/about/">About</a>
+                
+                <button id="dark-mode-button"></button>
+            </div>
+            </div>
+    </div>
+</nav>
+        <main>
+            
+
+<div class="container">
+    <article>
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Writing a simple Linux Kernel</h1>
+                    <div class="post-meta">
+                        <div>
+                            By ozan ocak on <time>April 12, 2021</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/aarch64/">aarch64</a>
+                            
+                            <a href="/tags/docker/">docker</a>
+                            
+                            <a href="/tags/linux/">linux</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </article>
+
+    <div class="article-post">
+    <h3>Setting up aarch64 platforn within docker container in x86 environment</h3>
+<p>Docker Desktop for Mac ships with hypervisors for the host OS.  The hypervisor is responsible for running a lightweight Linux kernel (LinuxKit), which is included as part of Docker Desktop.  This lightweight container OS comes packaged with the QEMU emulator, and comes pre-configured with binfmt_misc to run binaries of any supported architecture. Binfmt_misc is a kernel subsystem which allows to set the magic numbers of a binary file to specific actions for their execution.</p>
+<p><img src="/Users/ozan/dev/website/blog3/blog/data/img/docker_emu.png" alt="arm64 docker on x86"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">docker run --rm -t arm64v8/ubuntu uname -m
+docker container ls
+docker <span class="nb">exec</span> -it &lt;container_id&gt; /bin/bash
+</code></pre></td></tr></table>
+</div>
+</div><p>when we run docker image, docker cli pull the img than we execute it in bash terminal of the container.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">uname -a
+Linux dfe4f9696511 4.19.121-linuxkit SMP Tue Dec <span class="m">1</span> 17:50:32 UTC <span class="m">2020</span> aarch64 GNU/Linux
+</code></pre></td></tr></table>
+</div>
+</div><p>We can see linuxkit as the  running operating sysyem of the container.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">apt update
+apt install gcc-aarch64-linux-gnu
+apt install vim
+</code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+</div>
+
+<div class="container">
+    
+    <nav class="flex container suggested">
+        
+        
+        
+        <a rel="next" href="/post/article1/" title="Next post (newer)">
+            <span>Next</span>
+            How did I build this website?
+            </a> 
+        
+    </nav>
+    
+</div>
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://github.com/OzanOcak">Github</a>
+            
+        </nav>
+    </section>
+    
+    <script async src="/js/features.min.c5d8f3350f5a652f526b982306299353824299adb7a3bd261ecffacc47087f66.js"></script>
+</footer>
+    </body>
+</html>

@@ -6,11 +6,11 @@
     <description>Recent content in docker on Warm journeys of bits and bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 12 Apr 2021 00:05:06 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 14 Apr 2021 00:05:06 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/tags/docker/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Writing a simple Linux Kernel</title>
       <link>https://bitsandbytes.github.io/post/article2/</link>
-      <pubDate>Mon, 12 Apr 2021 00:05:06 -0400</pubDate>
+      <pubDate>Wed, 14 Apr 2021 00:05:06 -0400</pubDate>
       
       <guid>https://bitsandbytes.github.io/post/article2/</guid>
       <description>Setting up aarch64 platform within docker container on x86 architecture Docker Desktop for Mac ships with hypervisors for the host OS. The hypervisor is responsible for running a lightweight Linux kernel (LinuxKit), which is included as part of Docker Desktop. This lightweight container OS comes packaged with the QEMU emulator, and comes pre-configured with binfmt_misc to run binaries of any supported architecture. Binfmt_misc is a kernel subsystem which allows to set the magic numbers of a binary file to specific actions for their execution.</description>

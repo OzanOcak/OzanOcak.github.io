@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title> Writing a simple Linux Kernel on Armv8 - 3  | Warm journeys of bits and bytes</title>
+    
+    
+    
+    <link rel="stylesheet" href="/sass/main.min.1a3290acca8b3fc92df85ea9200859476d6c80d59009c89a749300f3ce7a7a67.css">
+</head>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="flex">
+            <div>
+                <a class="brand" href="/">
+                    
+                    Warm journeys of bits and bytes
+                    </a>
+            </div>
+            <div class="flex">
+                
+                <a href="/about/">About</a>
+                
+                <button id="dark-mode-button"></button>
+            </div>
+            </div>
+    </div>
+</nav>
+        <main>
+            
+
+<div class="container">
+    <article>
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Writing a simple Linux Kernel on Armv8 - 3 </h1>
+                    <div class="post-meta">
+                        <div>
+                            By ozan ocak on <time>May 24, 2021</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/aarch64/">aarch64</a>
+                            
+                            <a href="/tags/kernel/">kernel</a>
+                            
+                            <a href="/tags/linux/">linux</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </article>
+
+    <div class="article-post">
+    <h5>Kernel boot process preparation</h5>
+<p>Now we can start adding header files under include folder. We will first create aux.h base.h and gpio.h files under peripherals subfolder. Raspberry Pi3 starts from 0x3F000000 adress, below is reserved for interrupt vector table and Raspberry Pi starts from 0xFE000000 adress.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-base.h" data-lang="base.h"><span class="cp">#pragma once
+</span><span class="cp"></span>
+<span class="cp">#if RPI_VERSION == 3
+</span><span class="cp">#define PBASE 0x3F000000  
+</span><span class="cp"></span>
+<span class="cp">#elif RPI_VERSION == 4
+</span><span class="cp">#define PBASE 0xFE000000
+</span><span class="cp"></span>
+<span class="cp">#else
+</span><span class="cp">#define PBASE 0
+</span><span class="cp">#error RPI_VERSION NOT DEFINED
+</span><span class="cp"></span>
+<span class="cp">#endif
+</span></code></pre></td></tr></table>
+</div>
+</div><p>We can rename data types shorter names for convinient. volatile type uses only for registers of cpu thus we rename it reg32 in order to remember we process data on actual register.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-common.h" data-lang="common.h"><span class="cp">#pragma once
+</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdint.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">typedef</span> <span class="n">uint8_t</span> <span class="n">u8</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="n">uint16_t</span> <span class="n">u16</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="n">uint32_t</span> <span class="n">u32</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="n">uint64_t</span> <span class="n">u64</span><span class="p">;</span>
+
+<span class="k">typedef</span> <span class="k">volatile</span> <span class="n">u32</span> <span class="n">reg32</span><span class="p">;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>Then header file for memory management which is mm.h . This file fedine page size and low memory.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mm.h" data-lang="mm.h"><span class="cp">#pragma once
+</span><span class="cp"></span>
+<span class="cp">#define PAGE_SHIFT 12
+</span><span class="cp">#define TABLE_SHIFT 9
+</span><span class="cp">#define SECTION_SHIFT (PAGE_SHIFT + TABLE_SHIFT)
+</span><span class="cp">#define PAGE_SIZE (1 &lt;&lt; PAGE_SHIFT)
+</span><span class="cp">#define SECTION_SIZE (1 &lt;&lt; SECTION_SHIFT)
+</span><span class="cp"></span>
+<span class="cp">#define LOW_MEMORY (2 * SECTION_SIZE)
+</span><span class="cp"></span>
+<span class="cp">#ifndef __ASSEMBLER__
+</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">memzero</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">src</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">n</span><span class="p">);</span>
+
+<span class="cp">#endif
+</span><span class="cp"></span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Then we need define some utility functions for now.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-utils.h" data-lang="utils.h"><span class="cp">#pragma once
+</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&#34;common.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">delay</span><span class="p">(</span><span class="n">u64</span> <span class="n">ticks</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">put32</span><span class="p">(</span><span class="n">u64</span> <span class="n">address</span><span class="p">,</span> <span class="n">u32</span> <span class="n">value</span><span class="p">);</span>
+<span class="n">u32</span> <span class="nf">get32</span><span class="p">(</span><span class="n">u64</span> <span class="n">address</span><span class="p">);</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>After defining header file we can write the implementation of the memzero function.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mm.S" data-lang="mm.S"><span class="na">.globl</span> <span class="no">memzero</span>
+<span class="nl">memzero:</span>
+    <span class="nf">str</span> <span class="no">xzr</span><span class="p">,</span> <span class="p">[</span><span class="no">x0</span><span class="p">],</span> <span class="c">#8
+</span><span class="c"></span>    <span class="no">subs</span> <span class="no">x1</span><span class="p">,</span> <span class="no">x1</span><span class="p">,</span> <span class="c">#8
+</span><span class="c"></span>    <span class="no">b.gt</span> <span class="no">memzero</span>
+    <span class="nf">ret</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>We take the Axilery information from Broadcast Arm cpu booklet in auxilery chapters</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-aux.h" data-lang="aux.h"><span class="cp">#pragma once
+</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&#34;common.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&#34;peripherals/base.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">struct</span> <span class="n">AuxRegs</span> <span class="p">{</span>
+    <span class="n">reg32</span> <span class="n">irq_status</span><span class="p">;</span>
+    <span class="n">reg32</span> <span class="n">enables</span><span class="p">;</span>
+    <span class="n">reg32</span> <span class="n">reserved</span><span class="p">[</span><span class="mi">14</span><span class="p">];</span>
+    <span class="n">reg32</span> <span class="n">mu_io</span><span class="p">;</span>
+    <span class="n">reg32</span> <span class="n">mu_ier</span><span class="p">;</span>
+    <span class="n">reg32</span> <span class="n">mu_iir</span><span class="p">;</span>
+    <span class="n">reg32</span> <span class="n">mu_lcr</span><span class="p">;</span>
+    <span class="n">reg32</span> <span class="n">mu_mcr</span><span class="p">;</span>
+    <span class="n">reg32</span> <span class="n">mu_lsr</span><span class="p">;</span>
+    <span class="n">reg32</span> <span class="n">mu_msr</span><span class="p">;</span>
+    <span class="n">reg32</span> <span class="n">mu_scratch</span><span class="p">;</span>
+    <span class="n">reg32</span> <span class="n">mu_control</span><span class="p">;</span>
+    <span class="n">reg32</span> <span class="n">mu_status</span><span class="p">;</span>
+    <span class="n">reg32</span> <span class="n">mu_baud_rate</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cp">#define REGS_AUX ((struct AuxRegs *)(PBASE + 0x00215000))
+</span></code></pre></td></tr></table>
+</div>
+</div><p>Now we can initialize our tiny kernel from kernel.c</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-kernel.c" data-lang="kernel.c"><span class="cp">#include</span> <span class="cpf">&#34;common.h&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;mini_uart.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">kernel_main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">uart_init</span><span class="p">();</span>
+    <span class="n">uart_send_string</span><span class="p">(</span><span class="s">&#34;Rasperry PI Bare Metal OS Initializing...</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+
+<span class="cp">#if RPI_VERSION == 3
+</span><span class="cp"></span>    <span class="n">uart_send_string</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\t</span><span class="s">Board: Raspberry PI 3</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+<span class="cp">#endif
+</span><span class="cp"></span>
+<span class="cp">#if RPI_VERSION == 4
+</span><span class="cp"></span>    <span class="n">uart_send_string</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\t</span><span class="s">Board: Raspberry PI 4</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+<span class="cp">#endif
+</span><span class="cp"></span>
+    <span class="n">uart_send_string</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n\n</span><span class="s">Done</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+
+    <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">uart_send</span><span class="p">(</span><span class="n">uart_recv</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+</div>
+
+<div class="container">
+    
+    <nav class="flex container suggested">
+        
+        <a rel="prev" href="/post/article3/" title="Previous post (older)">
+            <span>Previous</span>
+            Writing a simple Linux Kernel on Armv8 - 2
+            </a>
+        
+        
+        
+        <a rel="next" href="/post/article5/" title="Next post (newer)">
+            <span>Next</span>
+            Writing a simple Linux Kernel on Armv8 - 4
+            </a> 
+        
+    </nav>
+    
+</div>
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://github.com/OzanOcak">Github</a>
+            
+        </nav>
+    </section>
+    
+    <script async src="/js/features.min.c5d8f3350f5a652f526b982306299353824299adb7a3bd261ecffacc47087f66.js"></script>
+</footer>
+    </body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title> Writing a simple Linux Kernel on Armv8 - 2 | Warm journeys of bits and bytes</title>
+    
+    
+    
+    <link rel="stylesheet" href="/sass/main.min.1a3290acca8b3fc92df85ea9200859476d6c80d59009c89a749300f3ce7a7a67.css">
+</head>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="flex">
+            <div>
+                <a class="brand" href="/">
+                    
+                    Warm journeys of bits and bytes
+                    </a>
+            </div>
+            <div class="flex">
+                
+                <a href="/about/">About</a>
+                
+                <button id="dark-mode-button"></button>
+            </div>
+            </div>
+    </div>
+</nav>
+        <main>
+            
+
+<div class="container">
+    <article>
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Writing a simple Linux Kernel on Armv8 - 2</h1>
+                    <div class="post-meta">
+                        <div>
+                            By ozan ocak on <time>May 22, 2021</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/aarch64/">aarch64</a>
+                            
+                            <a href="/tags/kernel/">kernel</a>
+                            
+                            <a href="/tags/linux/">linux</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </article>
+
+    <div class="article-post">
+    <p>This is a documentation of writing bare operating system on hardware specifically on raspberry pi. This doc originally developed by Sergey Matyukevich then created another tutorial upon original project by Rocky Pulley.</p>
+<h3>Makefile</h3> 
+We first need to specify the environment for booting in config.txt and create a makefile in order to not to call all dependencies every single time when we build the project. In the makefile we locate boot directory then determine the type of arm gnu
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Makefile" data-lang="Makefile"><span class="nv">RPI_VERSION</span> <span class="o">?=</span> <span class="m">4</span>
+
+<span class="nv">BOOTMNT</span> <span class="o">?=</span> /media/parallels/boot
+
+<span class="nv">ARMGNU</span> <span class="o">?=</span> aarch64-linux-gnu
+
+<span class="nv">COPS</span> <span class="o">=</span> -DRPI_VERSION<span class="o">=</span><span class="k">$(</span>RPI_VERSION<span class="k">)</span> -Wall -nostdlib -nostartfiles -ffreestanding <span class="se">\
+</span><span class="se"></span>	   -Iinclude -mgeneral-regs-only
+
+<span class="nv">ASMOPS</span> <span class="o">=</span> -Iinclude
+
+<span class="nv">BUILD_DIR</span> <span class="o">=</span> build
+<span class="nv">SRC_DIR</span> <span class="o">=</span> src
+
+<span class="nf">all </span><span class="o">:</span> <span class="n">kernel</span>8.<span class="n">img</span>
+
+<span class="nf">clean </span><span class="o">:</span>
+	rm -rf <span class="k">$(</span>BUILD_DIR<span class="k">)</span> *.img 
+
+<span class="nf">$(BUILD_DIR)/%_c.o</span><span class="o">:</span> <span class="k">$(</span><span class="nv">SRC_DIR</span><span class="k">)</span>/%.<span class="n">c</span>
+	mkdir -p <span class="k">$(</span>@D<span class="k">)</span>
+	<span class="k">$(</span>ARMGNU<span class="k">)</span>-gcc <span class="k">$(</span>COPS<span class="k">)</span> -MMD -c $&lt; -o <span class="nv">$@</span>
+
+<span class="nf">$(BUILD_DIR)/%_s.o</span><span class="o">:</span> <span class="k">$(</span><span class="nv">SRC_DIR</span><span class="k">)</span>/%.<span class="n">S</span>
+	mkdir -p <span class="k">$(</span>@D<span class="k">)</span>
+	<span class="k">$(</span>ARMGNU<span class="k">)</span>-gcc <span class="k">$(</span>COPS<span class="k">)</span> -MMD -c $&lt; -o <span class="nv">$@</span>
+
+<span class="nv">C_FILES</span> <span class="o">=</span> <span class="k">$(</span>wildcard <span class="k">$(</span>SRC_DIR<span class="k">)</span>/*.c<span class="k">)</span>
+<span class="nv">ASM_FILES</span> <span class="o">=</span> <span class="k">$(</span>wildcard <span class="k">$(</span>SRC_DIR<span class="k">)</span>/*.S<span class="k">)</span>
+<span class="nv">OBJ_FILES</span> <span class="o">=</span> <span class="k">$(</span>C_FILES:<span class="k">$(</span>SRC_DIR<span class="k">)</span>/%.c<span class="o">=</span><span class="k">$(</span>BUILD_DIR<span class="k">)</span>/%_c.o<span class="k">)</span>
+<span class="nv">OBJ_FILES</span> <span class="o">+=</span> <span class="k">$(</span>ASM_FILES:<span class="k">$(</span>SRC_DIR<span class="k">)</span>/%.S<span class="o">=</span><span class="k">$(</span>BUILD_DIR<span class="k">)</span>/%_s.o<span class="k">)</span>
+
+<span class="nv">DEP_FILES</span> <span class="o">=</span> <span class="k">$(</span>OBJ_FILES:%.o<span class="o">=</span>%.d<span class="k">)</span>
+<span class="err">-include</span> <span class="k">$(</span><span class="nv">DEP_FILES</span><span class="k">)</span>
+
+<span class="nf">kernel8.img</span><span class="o">:</span> <span class="k">$(</span><span class="nv">SRC_DIR</span><span class="k">)</span>/<span class="n">linker</span>.<span class="n">ld</span> <span class="k">$(</span><span class="nv">OBJ_FILES</span><span class="k">)</span>
+	@echo <span class="s2">&#34;Building for RPI </span><span class="k">$(</span>value RPI_VERSION<span class="k">)</span><span class="s2">&#34;</span>
+	@echo <span class="s2">&#34;Deploy to </span><span class="k">$(</span>value BOOTMNT<span class="k">)</span><span class="s2">&#34;</span>
+	@echo <span class="s2">&#34;&#34;</span>
+	<span class="k">$(</span>ARMGNU<span class="k">)</span>-ld -T <span class="k">$(</span>SRC_DIR<span class="k">)</span>/linker.ld -o <span class="k">$(</span>BUILD_DIR<span class="k">)</span>/kernel8.elf <span class="k">$(</span>OBJ_FILES<span class="k">)</span>
+	<span class="k">$(</span>ARMGNU<span class="k">)</span>-objcopy <span class="k">$(</span>BUILD_DIR<span class="k">)</span>/kernel8.elf -O binary kernel8.img
+<span class="err">ifeq</span> <span class="err">(</span><span class="k">$(</span><span class="nv">RPI_VERSION</span><span class="k">)</span><span class="err">,</span> <span class="err">4)</span>
+	<span class="err">cp</span> <span class="err">kernel8.img</span> <span class="k">$(</span><span class="nv">BOOTMNT</span><span class="k">)</span><span class="err">/kernel8-rpi4.img</span>
+<span class="err">else</span>
+	<span class="err">cp</span> <span class="err">kernel8.img</span> <span class="k">$(</span><span class="nv">BOOTMNT</span><span class="k">)</span><span class="err">/</span>
+<span class="err">endif</span>
+	<span class="err">cp</span> <span class="err">config.txt</span> <span class="k">$(</span><span class="nv">BOOTMNT</span><span class="k">)</span><span class="err">/</span>
+	<span class="err">sync</span>
+</code></pre></td></tr></table>
+</div>
+</div><h6 id="we-need-to-add-all-necessary-flags">we need to add all necessary flags</h6>
+<ul>
+<li>Wall for all warnings</li>
+<li>nostdlib for not  calling  C standard library</li>
+<li>ffreestanding means compiler not to assume standard functions have regular defination</li>
+<li>linclude is header files in the include folder</li>
+<li>mgeneral-regs-only is to use only general purpose register of arm processor</li>
+</ul>
+<p>While SRC_DIR contain source code, BUILD_DIR contains compiled object files. Build target will be image file( kernel8.img )</p>
+<h5>The linker script</h5>
+purpose of the linker script is to describe how the sections in the input object files should be mapped into the output file (.elf).
+<pre><code class="language-linker.ld" data-lang="linker.ld">SECTIONS
+{
+    .text.boot : { *(.text.boot) }
+    .text : { *(.text) }
+    .rodata : { *(.rodata) }
+    .data : { *(.data) }
+    . = ALIGN(0x8);
+    bss_begin = .;
+    .bss : { *(.bss*) }
+    bss_end = .;
+}
+</code></pre><p>After startup, the Raspberry Pi loads(kernel8.img)into memory and starts execution from the beginning of the file. That&rsquo;s why the(.text.boot)section must be first; we are going to put the OS startup code inside this section. The.text,.rodata, and.datasections contain kernel-compiled instructions, read-only data, and normal data</p>
+<h5>Booting the kernel</h5>
+Now it is time to boot by boot.S file where we check process id (and with hex 1111)  then hang all processes . After cleaning the .bss section, we initialize the stack pointer and pass execution to the kernel_main function. 
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-boot.S" data-lang="boot.S"><span class="c">#include &#34;mm.h&#34;
+</span><span class="c"></span>
+<span class="na">.section</span> <span class="s">&#34;.text.boot&#34;</span>
+
+<span class="na">.globl</span> <span class="no">_start</span>
+<span class="nl">_start:</span>
+    <span class="nf">mrs</span> <span class="no">x0</span><span class="p">,</span> <span class="no">mpidr_el1</span>
+    <span class="nf">and</span> <span class="no">x0</span><span class="p">,</span> <span class="no">x0</span><span class="p">,</span> <span class="c">#0xFF
+</span><span class="c"></span>    <span class="no">cbz</span> <span class="no">x0</span><span class="p">,</span> <span class="no">master</span>
+    <span class="nf">b</span> <span class="no">proc_hang</span>
+
+<span class="nl">master:</span>
+    <span class="nf">adr</span> <span class="no">x0</span><span class="p">,</span> <span class="no">bss_begin</span>
+    <span class="nf">adr</span> <span class="no">x1</span><span class="p">,</span> <span class="no">bss_end</span>
+    <span class="nf">sub</span> <span class="no">x1</span><span class="p">,</span> <span class="no">x1</span><span class="p">,</span> <span class="no">x0</span>
+    <span class="nf">bl</span> <span class="no">memzero</span>
+
+    <span class="nf">mov</span> <span class="no">sp</span><span class="p">,</span> <span class="c">#LOW_MEMORY
+</span><span class="c"></span>    <span class="no">bl</span> <span class="no">kernel_main</span>
+    <span class="nf">b</span>  <span class="no">proc_hang</span>
+
+<span class="nl">proc_hang:</span>
+    <span class="nf">wfe</span>
+    <span class="nf">b</span> <span class="no">proc_hang</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>LOW_MEMORY is defined in mm.h and is equal to 4MB.
+The kernel_main function
+We have seen that the boot code eventually passes control to the kernel_main function.</p>
+<h5>Mini UART initialization</h5>
+<p>Put32 and get32  functions are very simple; they allow us to read and write some data to and from a 32-bit register in utils.S. After the Mini UART is ready, we can try to use it to send and receive some data</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mini_uart.c" data-lang="mini_uart.c"><span class="cp">#include</span> <span class="cpf">&#34;gpio.h&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;utils.h&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;peripherals/aux.h&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;mini_uart.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="cp">#define TXD 14
+</span><span class="cp">#define RXD 15
+</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">uart_init</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">gpio_pin_set_func</span><span class="p">(</span><span class="n">TXD</span><span class="p">,</span> <span class="n">GFAlt5</span><span class="p">);</span>
+    <span class="n">gpio_pin_set_func</span><span class="p">(</span><span class="n">RXD</span><span class="p">,</span> <span class="n">GFAlt5</span><span class="p">);</span>
+
+    <span class="n">gpio_pin_enable</span><span class="p">(</span><span class="n">TXD</span><span class="p">);</span>
+    <span class="n">gpio_pin_enable</span><span class="p">(</span><span class="n">RXD</span><span class="p">);</span>
+
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">enables</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_control</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_ier</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_lcr</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_mcr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="cp">#if RPI_VERSION == 3
+</span><span class="cp"></span>    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_baud_rate</span> <span class="o">=</span> <span class="mi">270</span><span class="p">;</span> <span class="c1">// = 115200 @ 250 Mhz
+</span><span class="c1"></span><span class="cp">#endif
+</span><span class="cp"></span>
+<span class="cp">#if RPI_VERSION == 4
+</span><span class="cp"></span>    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_baud_rate</span> <span class="o">=</span> <span class="mi">541</span><span class="p">;</span> <span class="c1">// = 115200 @ 500 Mhz
+</span><span class="c1"></span><span class="cp">#endif
+</span><span class="cp"></span>
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_control</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="n">uart_send</span><span class="p">(</span><span class="sc">&#39;\r&#39;</span><span class="p">);</span>
+    <span class="n">uart_send</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">);</span>
+    <span class="n">uart_send</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">uart_send</span><span class="p">(</span><span class="kt">char</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_lsr</span> <span class="o">&amp;</span> <span class="mh">0x20</span><span class="p">));</span>
+
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_io</span> <span class="o">=</span> <span class="n">c</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">char</span> <span class="nf">uart_recv</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_lsr</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">));</span>
+
+    <span class="k">return</span> <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_io</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">uart_send_string</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">str</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">*</span><span class="n">str</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">str</span> <span class="o">==</span> <span class="sc">&#39;\n&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">uart_send</span><span class="p">(</span><span class="sc">&#39;\r&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">uart_send</span><span class="p">(</span><span class="o">*</span><span class="n">str</span><span class="p">);</span>
+        <span class="n">str</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+</div>
+
+<div class="container">
+    
+    <nav class="flex container suggested">
+        
+        <a rel="prev" href="/post/article2/" title="Previous post (older)">
+            <span>Previous</span>
+            Writing a simple Linux Kernel-1
+            </a>
+        
+        
+        
+        <a rel="next" href="/post/article4/" title="Next post (newer)">
+            <span>Next</span>
+            Writing a simple Linux Kernel on Armv8 - 3 
+            </a> 
+        
+    </nav>
+    
+</div>
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://github.com/OzanOcak">Github</a>
+            
+        </nav>
+    </section>
+    
+    <script async src="/js/features.min.c5d8f3350f5a652f526b982306299353824299adb7a3bd261ecffacc47087f66.js"></script>
+</footer>
+    </body>
+</html>

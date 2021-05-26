@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>linux on Warm journeys of bits and bytes</title>
-    <link>https://bitsandbytes.github.io/tags/linux/</link>
-    <description>Recent content in linux on Warm journeys of bits and bytes</description>
+    <title>kernel on Warm journeys of bits and bytes</title>
+    <link>https://bitsandbytes.github.io/tags/kernel/</link>
+    <description>Recent content in kernel on Warm journeys of bits and bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 26 May 2021 00:10:56 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 26 May 2021 00:10:56 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/tags/kernel/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Writing a simple Linux Kernel on Armv8 - 4</title>
       <link>https://bitsandbytes.github.io/post/article5/</link>
@@ -35,15 +35,6 @@
       <guid>https://bitsandbytes.github.io/post/article3/</guid>
       <description>This is a documentation of writing bare operating system on hardware specifically on raspberry pi. This doc originally developed by Sergey Matyukevich then created another tutorial upon original project by Rocky Pulley.
 Makefile We first need to specify the environment for booting in config.txt and create a makefile in order to not to call all dependencies every single time when we build the project. In the makefile we locate boot directory then determine the type of arm gnu 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48  RPI_VERSION ?</description>
-    </item>
-    
-    <item>
-      <title>Writing a simple Linux Kernel-1</title>
-      <link>https://bitsandbytes.github.io/post/article2/</link>
-      <pubDate>Wed, 14 Apr 2021 00:05:06 -0400</pubDate>
-      
-      <guid>https://bitsandbytes.github.io/post/article2/</guid>
-      <description>Setting up aarch64 platform within docker container on x86 architecture Docker Desktop for Mac ships with hypervisors for the host OS. The hypervisor is responsible for running a lightweight Linux kernel (LinuxKit), which is included as part of Docker Desktop. This lightweight container OS comes packaged with the QEMU emulator, and comes pre-configured with binfmt_misc to run binaries of any supported architecture. Binfmt_misc is a kernel subsystem which allows to set the magic numbers of a binary file to specific actions for their execution.</description>
     </item>
     
   </channel>

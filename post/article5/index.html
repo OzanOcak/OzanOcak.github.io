@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title> Writing a simple Linux Kernel on Armv8 - 4 | Warm journeys of bits and bytes</title>
+    
+    
+    
+    <link rel="stylesheet" href="/sass/main.min.1a3290acca8b3fc92df85ea9200859476d6c80d59009c89a749300f3ce7a7a67.css">
+</head>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="flex">
+            <div>
+                <a class="brand" href="/">
+                    
+                    Warm journeys of bits and bytes
+                    </a>
+            </div>
+            <div class="flex">
+                
+                <a href="/about/">About</a>
+                
+                <button id="dark-mode-button"></button>
+            </div>
+            </div>
+    </div>
+</nav>
+        <main>
+            
+
+<div class="container">
+    <article>
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Writing a simple Linux Kernel on Armv8 - 4</h1>
+                    <div class="post-meta">
+                        <div>
+                            By ozan ocak on <time>May 26, 2021</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/aarch64/">aarch64</a>
+                            
+                            <a href="/tags/kernel/">kernel</a>
+                            
+                            <a href="/tags/linux/">linux</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </article>
+
+    <div class="article-post">
+    <h5>GPIO of Arm</h5>
+<p>We take the GPIO information from Broadcast Arm cpu booklet in gpio chapters</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-gpio.h" data-lang="gpio.h">
+<span class="cp">#pragma once
+</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&#34;peripherals/gpio.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">typedef</span> <span class="k">enum</span> <span class="n">_GpioFunc</span> <span class="p">{</span>
+    <span class="n">GFInput</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">GFOutput</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">GFAlt0</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">GFAlt1</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">GFAlt2</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="n">GFAlt3</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="n">GFAlt4</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">GFAlt5</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="p">}</span> <span class="n">GpioFunc</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">gpio_pin_set_func</span><span class="p">(</span><span class="n">u8</span> <span class="n">pinNumber</span><span class="p">,</span> <span class="n">GpioFunc</span> <span class="n">func</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">gpio_pin_enable</span><span class="p">(</span><span class="n">u8</span> <span class="n">pinNumber</span><span class="p">);</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>Now we can write gpio.c file. we first locate bits with and gate then set them with or gate.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-gpio.c" data-lang="gpio.c"><span class="cp">#include</span> <span class="cpf">&#34;gpio.h&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;utils.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">gpio_pin_set_func</span><span class="p">(</span><span class="n">u8</span> <span class="n">pinNumber</span><span class="p">,</span> <span class="n">GpioFunc</span> <span class="n">func</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">u8</span> <span class="n">bitStart</span> <span class="o">=</span> <span class="p">(</span><span class="n">pinNumber</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="o">%</span> <span class="mi">30</span><span class="p">;</span>
+    <span class="n">u8</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">pinNumber</span> <span class="o">/</span> <span class="mi">10</span><span class="p">;</span>
+
+    <span class="n">u32</span> <span class="n">selector</span> <span class="o">=</span> <span class="n">REGS_GPIO</span><span class="o">-&gt;</span><span class="n">func_select</span><span class="p">[</span><span class="n">reg</span><span class="p">];</span>
+    <span class="n">selector</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="mi">7</span> <span class="o">&lt;&lt;</span> <span class="n">bitStart</span><span class="p">);</span>
+    <span class="n">selector</span> <span class="o">|=</span> <span class="p">(</span><span class="n">func</span> <span class="o">&lt;&lt;</span> <span class="n">bitStart</span><span class="p">);</span>
+
+    <span class="n">REGS_GPIO</span><span class="o">-&gt;</span><span class="n">func_select</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span> <span class="o">=</span> <span class="n">selector</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">gpio_pin_enable</span><span class="p">(</span><span class="n">u8</span> <span class="n">pinNumber</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">REGS_GPIO</span><span class="o">-&gt;</span><span class="n">pupd_enable</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">delay</span><span class="p">(</span><span class="mi">150</span><span class="p">);</span>
+    <span class="n">REGS_GPIO</span><span class="o">-&gt;</span><span class="n">pupd_enable_clocks</span><span class="p">[</span><span class="n">pinNumber</span> <span class="o">/</span> <span class="mi">32</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">pinNumber</span> <span class="o">%</span> <span class="mi">32</span><span class="p">);</span>
+    <span class="n">delay</span><span class="p">(</span><span class="mi">150</span><span class="p">);</span>
+    <span class="n">REGS_GPIO</span><span class="o">-&gt;</span><span class="n">pupd_enable</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">REGS_GPIO</span><span class="o">-&gt;</span><span class="n">pupd_enable_clocks</span><span class="p">[</span><span class="n">pinNumber</span> <span class="o">/</span> <span class="mi">32</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h5>Mini uart connection</h5>
+First define all the function to send the data
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mini_uart.h" data-lang="mini_uart.h"><span class="cp">#pragma once
+</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">uart_init</span><span class="p">();</span>
+<span class="kt">char</span> <span class="nf">uart_recv</span><span class="p">();</span>
+<span class="kt">void</span> <span class="nf">uart_send</span><span class="p">(</span><span class="kt">char</span> <span class="n">c</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">uart_send_string</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">str</span><span class="p">);</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>Then the implementation of the functions in order to enable gpio pins and send string via uart</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mini_uart.c" data-lang="mini_uart.c">
+<span class="cp">#include</span> <span class="cpf">&#34;gpio.h&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;utils.h&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;peripherals/aux.h&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;mini_uart.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="cp">#define TXD 14
+</span><span class="cp">#define RXD 15
+</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">uart_init</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">gpio_pin_set_func</span><span class="p">(</span><span class="n">TXD</span><span class="p">,</span> <span class="n">GFAlt5</span><span class="p">);</span>
+    <span class="n">gpio_pin_set_func</span><span class="p">(</span><span class="n">RXD</span><span class="p">,</span> <span class="n">GFAlt5</span><span class="p">);</span>
+
+    <span class="n">gpio_pin_enable</span><span class="p">(</span><span class="n">TXD</span><span class="p">);</span>
+    <span class="n">gpio_pin_enable</span><span class="p">(</span><span class="n">RXD</span><span class="p">);</span>
+
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">enables</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_control</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_ier</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_lcr</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_mcr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="cp">#if RPI_VERSION == 3
+</span><span class="cp"></span>    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_baud_rate</span> <span class="o">=</span> <span class="mi">270</span><span class="p">;</span> <span class="c1">// = 115200 @ 250 Mhz
+</span><span class="c1"></span><span class="cp">#endif
+</span><span class="cp"></span>
+<span class="cp">#if RPI_VERSION == 4
+</span><span class="cp"></span>    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_baud_rate</span> <span class="o">=</span> <span class="mi">541</span><span class="p">;</span> <span class="c1">// = 115200 @ 500 Mhz
+</span><span class="c1"></span><span class="cp">#endif
+</span><span class="cp"></span>
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_control</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="n">uart_send</span><span class="p">(</span><span class="sc">&#39;\r&#39;</span><span class="p">);</span>
+    <span class="n">uart_send</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">);</span>
+    <span class="n">uart_send</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">uart_send</span><span class="p">(</span><span class="kt">char</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_lsr</span> <span class="o">&amp;</span> <span class="mh">0x20</span><span class="p">));</span>
+
+    <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_io</span> <span class="o">=</span> <span class="n">c</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">char</span> <span class="nf">uart_recv</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_lsr</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">));</span>
+
+    <span class="k">return</span> <span class="n">REGS_AUX</span><span class="o">-&gt;</span><span class="n">mu_io</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">uart_send_string</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">str</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">*</span><span class="n">str</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">str</span> <span class="o">==</span> <span class="sc">&#39;\n&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">uart_send</span><span class="p">(</span><span class="sc">&#39;\r&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">uart_send</span><span class="p">(</span><span class="o">*</span><span class="n">str</span><span class="p">);</span>
+        <span class="n">str</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+</div>
+
+<div class="container">
+    
+    <nav class="flex container suggested">
+        
+        <a rel="prev" href="/post/article4/" title="Previous post (older)">
+            <span>Previous</span>
+            Writing a simple Linux Kernel on Armv8 - 3 
+            </a>
+        
+        
+        
+    </nav>
+    
+</div>
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://github.com/OzanOcak">Github</a>
+            
+        </nav>
+    </section>
+    
+    <script async src="/js/features.min.c5d8f3350f5a652f526b982306299353824299adb7a3bd261ecffacc47087f66.js"></script>
+</footer>
+    </body>
+</html>

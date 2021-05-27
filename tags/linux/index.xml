@@ -6,7 +6,27 @@
     <description>Recent content in linux on Warm journeys of bits and bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 26 May 2021 00:10:56 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 26 May 2021 00:23:56 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Writing a simple Linux Kernel on Armv8 - 7</title>
+      <link>https://bitsandbytes.github.io/post/article7/</link>
+      <pubDate>Wed, 26 May 2021 00:23:56 -0400</pubDate>
+      
+      <guid>https://bitsandbytes.github.io/post/article7/</guid>
+      <description>Interrupts First we need to implement our vector interrupt table
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134  #include &amp;#34;entry.</description>
+    </item>
+    
+    <item>
+      <title>Writing a simple Linux Kernel on Armv8 - 6</title>
+      <link>https://bitsandbytes.github.io/post/article6/</link>
+      <pubDate>Wed, 26 May 2021 00:22:56 -0400</pubDate>
+      
+      <guid>https://bitsandbytes.github.io/post/article6/</guid>
+      <description>Boot to Exception level 1 We need to add system register header file then activate neccessary registers in master section before return it , lastly we jump exception level 1 in order to allocate memory in bss section.
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26  #include &amp;#34;sysregs.h&amp;#34;  master: ldr x0, =SCTLR_VALUE_MMU_DISABLED msr sctlr_el1, x0 ldr x0, =HCR_VALUE msr hcr_el2, x0 ldr x0, =SCR_VALUE msr scr_el3, x0 ldr x0, =SPSR_VALUE msr spsr_el3, x0 adr x0, el1_entry msr elr_el3, x0 eret el1_entry: adr x0, bss_begin adr x1, bss_end sub x1, x1, x0 bl memzero   All the system register information base on the booklet of Arm architecture reference manual Armv8.</description>
+    </item>
+    
     <item>
       <title>Writing a simple Linux Kernel on Armv8 - 4</title>
       <link>https://bitsandbytes.github.io/post/article5/</link>

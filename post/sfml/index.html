@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title> Writing a simple cpp game with Sfml | Warm journeys of bits and bytes</title>
+    
+    
+    
+    <link rel="stylesheet" href="/sass/main.min.1a3290acca8b3fc92df85ea9200859476d6c80d59009c89a749300f3ce7a7a67.css">
+</head>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="flex">
+            <div>
+                <a class="brand" href="/">
+                    
+                    Warm journeys of bits and bytes
+                    </a>
+            </div>
+            <div class="flex">
+                
+                <a href="/about/">About</a>
+                
+                <button id="dark-mode-button"></button>
+            </div>
+            </div>
+    </div>
+</nav>
+        <main>
+            
+
+<div class="container">
+    <article>
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Writing a simple cpp game with Sfml</h1>
+                    <div class="post-meta">
+                        <div>
+                            By ozan ocak on <time>May 27, 2021</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/cpp/">cpp</a>
+                            
+                            <a href="/tags/sfml/">sfml</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </article>
+
+    <div class="article-post">
+    <h3>Setting up environment on mac</h3>
+<p>We going to build simple snake game by using sfml library on mac os environment. I prefer creating projects with Makefile rather than using build-in tools so We will not use Xcode.First We need to download  sfml library</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">sudo brew install libsfml-dev
+</code></pre></td></tr></table>
+</div>
+</div><p>then We will add easy c++ project extension in VSCode and after pressing Ctrl+Shift+P, search easy cpp create new project and finally We will create with clang++. Before executing makefile We need add dependencies in libraries in makefile.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Makefile" data-lang="Makefile"><span class="nv">LIBRARIES</span>	<span class="o">:=</span> -lsfml-graphics -lsfml-window -lsfml-system
+</code></pre></td></tr></table>
+</div>
+</div><p>In the SFML <a href="https://www.sfml-dev.org/tutorials/2.5/start-linux.php">page</a>, We will borrow the main.cpp sample. As it works, We can start devoloping real project.Every executable starts from main function since kernel is interrupted for looking for another main(). return 0 indicates there is no error in the executable.</p>
+<p>We need draw a window first. In game.cpp ,we create Game constructor,destructor and Run methods from game.hpp. We define m_context pointer</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Context</span><span class="o">&gt;</span> <span class="n">m_context</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cp">#pragma once   
+</span><span class="cp">#include</span> <span class="cpf">&lt;SFML/System/Time.hpp&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">namespace</span> <span class="n">Engine</span>
+<span class="p">{</span>
+    <span class="k">class</span> <span class="nc">State</span>
+    <span class="p">{</span>
+    <span class="k">public</span><span class="o">:</span>
+        <span class="n">State</span><span class="p">(){};</span>      <span class="c1">// constructor
+</span><span class="c1"></span>        <span class="k">virtual</span> <span class="o">~</span><span class="n">State</span><span class="p">(){};</span>     <span class="c1">//destructor
+</span><span class="c1"></span>
+        <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Init</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>   <span class="c1">//pure function or interface
+</span><span class="c1"></span>        <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">ProcessInput</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Update</span><span class="p">(</span><span class="n">sf</span><span class="o">::</span><span class="n">Time</span> <span class="n">deltaTime</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Draw</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Pause</span><span class="p">(){};</span>
+        <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">Start</span><span class="p">(){};</span>
+    <span class="p">};</span>
+    
+<span class="p">}</span> 
+</code></pre></td></tr></table>
+</div>
+</div><p>First of all pragma once is a preprocessor letting compiler know the headers are supposed to be included no more than once. Virtual class can have implementation and it derived classes can override it but if virtual class is pure function via =0, it doesnt have have any defination and must be written defination by derived classes(it is interface).</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cp">#pragma once
+</span><span class="cp">#include</span> <span class="cpf">&lt;stack&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;State.hpp&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">namespace</span> <span class="n">Engine</span>
+<span class="p">{</span>
+ <span class="k">class</span> <span class="nc">StateMan</span>
+ <span class="p">{</span>
+  <span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">stack</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">State</span><span class="o">&gt;&gt;</span> <span class="n">m_stateStack</span><span class="p">;</span> <span class="c1">// m_stateStack[][]
+</span><span class="c1"></span>    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">State</span><span class="o">&gt;</span> <span class="n">m_newState</span><span class="p">;</span>
+
+    <span class="kt">bool</span> <span class="n">m_add</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="n">m_replace</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="n">m_remove</span><span class="p">;</span>
+
+  <span class="k">public</span><span class="o">:</span>
+    <span class="n">StateMan</span><span class="p">();</span>
+    <span class="o">~</span><span class="n">StateMan</span><span class="p">();</span>
+
+    <span class="kt">void</span> <span class="nf">Add</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">State</span><span class="o">&gt;</span> <span class="n">toAdd</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">replace</span> <span class="o">=</span> <span class="nb">false</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="nf">PopCurrent</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">ProcessStateChange</span><span class="p">();</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">State</span><span class="o">&gt;&amp;</span> <span class="n">GetCurrent</span><span class="p">();</span>
+ <span class="p">};</span>
+
+<span class="p">}</span> 
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&#34;Game.hpp&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Game</span> <span class="n">game</span><span class="p">;</span>
+    <span class="n">game</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Game object created and Run() method called.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cp">#pragma once
+</span><span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;SFML/Graphics/RenderWindow.hpp&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;AssetMan.hpp&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;StateMan.hpp&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">enum</span> <span class="nc">AssetID</span>
+<span class="p">{</span>
+    <span class="n">MAIN_FONT</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">GRASS</span><span class="p">,</span><span class="n">FOOD</span><span class="p">,</span><span class="n">WALL</span><span class="p">,</span><span class="n">SNAKE</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">Context</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Engine</span><span class="o">::</span><span class="n">AssetMan</span><span class="o">&gt;</span> <span class="n">m_assets</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Engine</span><span class="o">::</span><span class="n">StateMan</span><span class="o">&gt;</span> <span class="n">m_states</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">sf</span><span class="o">::</span><span class="n">RenderWindow</span><span class="o">&gt;</span> <span class="n">m_window</span><span class="p">;</span>
+
+    <span class="n">Context</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">m_assets</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Engine</span><span class="o">::</span><span class="n">AssetMan</span><span class="o">&gt;</span><span class="p">();</span>
+        <span class="n">m_states</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Engine</span><span class="o">::</span><span class="n">StateMan</span><span class="o">&gt;</span><span class="p">();</span>
+        <span class="n">m_window</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">sf</span><span class="o">::</span><span class="n">RenderWindow</span><span class="o">&gt;</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Game</span>
+<span class="p">{</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Context</span><span class="o">&gt;</span> <span class="n">m_context</span><span class="p">;</span>
+    <span class="k">const</span> <span class="n">sf</span><span class="o">::</span><span class="n">Time</span> <span class="n">TIME_PER_FRAME</span> <span class="o">=</span> <span class="n">sf</span><span class="o">::</span><span class="n">seconds</span><span class="p">(</span><span class="mf">1.f</span><span class="o">/</span><span class="mf">60.f</span><span class="p">);</span>
+
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Game</span><span class="p">();</span>
+    <span class="o">~</span><span class="n">Game</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">Run</span><span class="p">();</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Memory is standart cpp library in order to manage memory, we will use unique_ptr(which is a smart pointer that indicates only single refernce can point to pointers, smart pointers doesnt need to be cared external memory management, once the program counter out of scope, the array will be deleted).
+We create 3 array with unique_ptr of std library, their types are written in &ldquo;&lt; &gt;&quot;.we need to add</p>
+
+    </div>
+</div>
+
+<div class="container">
+    
+    <nav class="flex container suggested">
+        
+        <a rel="prev" href="/post/article7/" title="Previous post (older)">
+            <span>Previous</span>
+            Writing a simple Linux Kernel on Armv8 - 6
+            </a>
+        
+        
+        
+    </nav>
+    
+</div>
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://github.com/OzanOcak">Github</a>
+            
+        </nav>
+    </section>
+    
+    <script async src="/js/features.min.c5d8f3350f5a652f526b982306299353824299adb7a3bd261ecffacc47087f66.js"></script>
+</footer>
+    </body>
+</html>

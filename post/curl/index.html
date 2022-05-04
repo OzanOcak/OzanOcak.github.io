@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title> cURL for CRUD  | Warm journeys of bits and bytes</title>
+    
+    
+    
+    <link rel="stylesheet" href="/sass/main.min.1a3290acca8b3fc92df85ea9200859476d6c80d59009c89a749300f3ce7a7a67.css">
+</head>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="flex">
+            <div>
+                <a class="brand" href="/">
+                    
+                    Warm journeys of bits and bytes
+                    </a>
+            </div>
+            <div class="flex">
+                
+                <a href="/about/">About</a>
+                
+                <button id="dark-mode-button"></button>
+            </div>
+            </div>
+    </div>
+</nav>
+        <main>
+            
+
+<div class="container">
+    <article>
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>cURL for CRUD </h1>
+                    <div class="post-meta">
+                        <div>
+                            By ozan ocak on <time>May 04, 2022</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/curl/">cURL</a>
+                            
+                            <a href="/tags/web-development/">web development</a>
+                            
+                            <a href="/tags/crud/">CRUD</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </article>
+
+    <div class="article-post">
+    <h2 id="bash">BASH</h2>
+<pre><code class="language-console" data-lang="console">echo &quot;Hello world!&quot;
+echo $?
+mkdir folder &amp;&amp; cd ./folder
+vim test.sh
+</code></pre><p><strong>$?</strong> comment will return last return in the stuck which will be either 0 or 1</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>
+<span class="nb">set</span> -e
+
+<span class="k">function</span> unit_test<span class="o">(){</span>
+	<span class="nb">echo</span> <span class="s2">&#34;running unit test&#34;</span>
+	<span class="k">return</span> <span class="m">1</span>
+<span class="o">}</span>
+<span class="k">function</span> integration_test<span class="o">(){</span>
+	<span class="nb">echo</span> <span class="s2">&#34;integration unit test&#34;</span>
+	<span class="k">return</span> <span class="m">0</span>
+<span class="o">}</span>
+<span class="k">function</span> e2e_test<span class="o">(){</span>
+	<span class="nb">echo</span> <span class="s2">&#34;e2e unit test&#34;</span>
+	<span class="k">return</span> <span class="m">0</span>
+<span class="o">}</span>
+
+<span class="nb">set</span> +e
+unit_test
+<span class="nb">set</span> -e
+integration_test
+e2e_test
+
+</code></pre></td></tr></table>
+</div>
+</div><p>we need to give execution permission to executable file</p>
+<pre><code class="language-console" data-lang="console">chmod +x test.sh
+</code></pre><p>because we set -e , even though unit_test fails, the program executes</p>
+<hr>
+<h3 id="returning-from-function">returning from function</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>
+<span class="k">function</span> sound<span class="o">(){</span>
+	<span class="nb">echo</span> <span class="s2">&#34;how!!&#34;</span>
+<span class="o">}</span>
+<span class="nb">echo</span> <span class="s2">&#34;dog says </span><span class="nv">$sound</span><span class="s2">&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><hr>
+<h3 id="tar">tar</h3>
+<p>we can not return anything apart from 0-255</p>
+<pre><code class="language-console" data-lang="console">vim file1 file2
+tar -cf files.tar file1 file2 &amp;&amp; rm file1 file2
+ls -lah
+tar -tf files.tar | grep file1  // to list them
+tar -xf files.tar // to extract files
+tar -czvf files.tgz file1 file2   //zipped file (the least kb)
+tar -xzvf files.tgz  // to extract them
+</code></pre><hr>
+<h2 id="curl">cURL</h2>
+<pre><code class="language-console" data-lang="console">
+curl localhost:3000/dogs  //implicit get request
+curl localhost:3000/dogs -X GET  // -o /folder/x.html
+curl localhost:3000/dogs -X POST -d '{&quot;name&quot;:&quot;erbash&quot;, &quot;bred&quot;:&quot;bulldog&quot;}' -H 'content-type: application/json'
+echo $? // to check if returns 0
+
+vim data.json // {&quot;name&quot;:&quot;jojo&quot;,&quot;bred&quot;:&quot;papillion&quot;}
+curl localhost:3000/dogs -d @data.json -H 'content-type: application/json'  // -v (verbose)
+curl localhost:3000/dogs -o /dev/dogs/data  // -w '%{response_code}'
+
+curl -v localhost:8080/admin // with verbose will get 401 not authorized
+curl localhost:8080/admin -u admin:secret_psswd   username:password
+curl -I localhost:3000/dogs -X GET  // -I to get header, -L to redirect
+
+curl localhost:3000/dogs -X GET  -o /folder/x.html
+
+curl localhost:3000/dogs -X GET  -v // you can read all the handshakes,certificates and html
+</code></pre>
+    </div>
+</div>
+
+<div class="container">
+    
+    <nav class="flex container suggested">
+        
+        <a rel="prev" href="/post/advanced_js/" title="Previous post (older)">
+            <span>Previous</span>
+            The language with two null pointer
+            </a>
+        
+        
+        
+    </nav>
+    
+</div>
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://github.com/OzanOcak">Github</a>
+            
+        </nav>
+    </section>
+    
+    <script async src="/js/features.min.c5d8f3350f5a652f526b982306299353824299adb7a3bd261ecffacc47087f66.js"></script>
+</footer>
+    </body>
+</html>

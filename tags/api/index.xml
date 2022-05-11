@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Api on Warm journeys of bits and bytes</title>
+    <link>https://bitsandbytes.github.io/tags/api/</link>
+    <description>Recent content in Api on Warm journeys of bits and bytes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 10 May 2022 00:05:06 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/tags/api/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>API with Golang and Sqlite</title>
+      <link>https://bitsandbytes.github.io/post/gosqlite/</link>
+      <pubDate>Tue, 10 May 2022 00:05:06 -0400</pubDate>
+      
+      <guid>https://bitsandbytes.github.io/post/gosqlite/</guid>
+      <description>Api with go and sqlite  compiles to machine code garbage collected goroutines / green threads channels for thread coordination statically typed no classes or type inheritance interfaces simple language, simple tools  mkdir fiberapi cd fiberapi go go version go mod init &amp;quot;github.com/OzanOcak/fiberapi&amp;quot; go get -u gorm.io/driver/mysql go get -u gorm.io/gorm go get github.com/gofiber/fiber/v2 Fiber is a Go web framework built on top of Fasthttp, the fastest HTTP engine for Go.</description>
+    </item>
+    
+  </channel>
+</rss>

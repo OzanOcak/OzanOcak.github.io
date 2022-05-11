@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title> API with Golang and Sqlite | Warm journeys of bits and bytes</title>
+    
+    
+    
+    <link rel="stylesheet" href="/sass/main.min.1a3290acca8b3fc92df85ea9200859476d6c80d59009c89a749300f3ce7a7a67.css">
+</head>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="flex">
+            <div>
+                <a class="brand" href="/">
+                    
+                    Warm journeys of bits and bytes
+                    </a>
+            </div>
+            <div class="flex">
+                
+                <a href="/about/">About</a>
+                
+                <button id="dark-mode-button"></button>
+            </div>
+            </div>
+    </div>
+</nav>
+        <main>
+            
+
+<div class="container">
+    <article>
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>API with Golang and Sqlite</h1>
+                    <div class="post-meta">
+                        <div>
+                            By ozan ocak on <time>May 10, 2022</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/curl/">cURL</a>
+                            
+                            <a href="/tags/web-development/">web development</a>
+                            
+                            <a href="/tags/crud/">CRUD</a>
+                            
+                            <a href="/tags/go/">Go</a>
+                            
+                            <a href="/tags/sqlite/">Sqlite</a>
+                            
+                            <a href="/tags/api/">Api</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </article>
+
+    <div class="article-post">
+    <h2 id="api-with-go-and-sqlite">Api with go and sqlite</h2>
+<ul>
+<li>compiles to machine code</li>
+<li>garbage collected</li>
+<li>goroutines / green threads</li>
+<li>channels for thread coordination</li>
+<li>statically typed</li>
+<li>no classes or type inheritance</li>
+<li>interfaces</li>
+<li>simple language, simple tools</li>
+</ul>
+<pre><code class="language-console" data-lang="console">mkdir fiberapi
+cd fiberapi
+go
+go version
+go mod init &quot;github.com/OzanOcak/fiberapi&quot;
+go get -u gorm.io/driver/mysql
+go get -u gorm.io/gorm
+go get github.com/gofiber/fiber/v2
+</code></pre><p>Fiber is a Go web framework built on top of Fasthttp, the fastest HTTP engine for Go.
+Gorm is a ORM library for golang</p>
+<p>main.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;log&#34;</span>
+	<span class="s">&#34;github.com/gofiber/fiber/v2&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">aloha</span><span class="p">(</span><span class="nx">arg</span> <span class="o">*</span><span class="nx">fiber</span><span class="p">.</span><span class="nx">Ctx</span><span class="p">)</span><span class="kt">error</span><span class="p">{</span>
+	<span class="k">return</span> <span class="nx">arg</span><span class="p">.</span><span class="nf">SendString</span><span class="p">(</span><span class="s">&#34;Hello world \n&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(){</span>
+	<span class="nx">app</span> <span class="o">:=</span> <span class="nx">fiber</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+
+	<span class="nx">app</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/api&#34;</span><span class="p">,</span><span class="nx">aloha</span><span class="p">)</span>
+	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">app</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;:8000&#34;</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code class="language-console" data-lang="console">go mod tidy
+go run main.go
+curl localhost/api -X GET -I
+mkdir database
+touch database/database.go
+</code></pre><p>open database.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">database</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;log&#34;</span>
+	<span class="s">&#34;os&#34;</span>
+
+	<span class="c1">//&#34;github.com/OzanOcak/api/models&#34;
+</span><span class="c1"></span>
+	<span class="s">&#34;gorm.io/driver/sqlite&#34;</span>
+	<span class="s">&#34;gorm.io/gorm&#34;</span>
+	<span class="s">&#34;gorm.io/gorm/logger&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">DbInstance</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">Database</span> <span class="nx">DbInstance</span>
+
+<span class="kd">func</span> <span class="nf">ConnectDb</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">gorm</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">sqlite</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;api.db&#34;</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Config</span><span class="p">{})</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;Failed to connect to the database! \n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Connected Successfully to Database&#34;</span><span class="p">)</span>
+	<span class="nx">db</span><span class="p">.</span><span class="nx">Logger</span> <span class="p">=</span> <span class="nx">logger</span><span class="p">.</span><span class="nx">Default</span><span class="p">.</span><span class="nf">LogMode</span><span class="p">(</span><span class="nx">logger</span><span class="p">.</span><span class="nx">Info</span><span class="p">)</span>
+	<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Running Migrations&#34;</span><span class="p">)</span>
+
+	<span class="c1">//db.AutoMigrate(&amp;models.User{}, &amp;models.Product{}, &amp;models.Order{})
+</span><span class="c1"></span>
+	<span class="nx">Database</span> <span class="p">=</span> <span class="nx">DbInstance</span><span class="p">{</span>
+		<span class="nx">Db</span><span class="p">:</span> <span class="nx">db</span><span class="p">,</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code class="language-console" data-lang="console">	go get gorm.io/driver/sqlite
+	go getgorm.io/gorm
+	go get gorm.io/gorm/logger
+
+    mkdir models
+	touch models/{user.go,product.go,order.go}
+</code></pre><p>order.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">models</span>
+
+<span class="kn">import</span> <span class="s">&#34;time&#34;</span>
+
+<span class="kd">type</span> <span class="nx">Order</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">ID</span>           <span class="kt">uint</span> <span class="s">`json:&#34;id&#34; gorm:&#34;primaryKey&#34;`</span>
+	<span class="nx">CreatedAt</span>    <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+	<span class="nx">ProductRefer</span> <span class="kt">int</span>     <span class="s">`json:&#34;product_id&#34;`</span>
+	<span class="nx">Product</span>      <span class="nx">Product</span> <span class="s">`gorm:&#34;foreignKey:ProductRefer&#34;`</span>
+	<span class="nx">UserRefer</span>    <span class="kt">int</span>     <span class="s">`json:&#34;user_id&#34;`</span>
+	<span class="nx">User</span>         <span class="nx">User</span>    <span class="s">`gorm:&#34;foreignKey:UserRefer&#34;`</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>product.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">models</span>
+
+<span class="kn">import</span> <span class="s">&#34;time&#34;</span>
+
+<span class="kd">type</span> <span class="nx">Product</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">ID</span>           <span class="kt">uint</span> <span class="s">`json:&#34;id&#34; gorm:&#34;primaryKey&#34;`</span>
+	<span class="nx">CreatedAt</span>    <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+	<span class="nx">Name</span>         <span class="kt">string</span> <span class="s">`json:&#34;name&#34;`</span>
+	<span class="nx">SerialNumber</span> <span class="kt">string</span> <span class="s">`json:&#34;serial_number&#34;`</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>user.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">models</span>
+
+<span class="kn">import</span> <span class="s">&#34;time&#34;</span>
+
+<span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">ID</span>        <span class="kt">uint</span> <span class="s">`json:&#34;id&#34; gorm:&#34;primaryKey&#34;`</span>
+	<span class="nx">CreatedAt</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+	<span class="nx">FirstName</span> <span class="kt">string</span> <span class="s">`json:&#34;first_name&#34;`</span>
+	<span class="nx">LastName</span>  <span class="kt">string</span> <span class="s">`json:&#34;last_name&#34;`</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>now we can migrate models in database.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="s">&#34;github.com/OzanOcak/fiberapi/models&#34;</span>
+
+<span class="nx">db</span><span class="p">.</span><span class="nf">AutoMigrate</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">models</span><span class="p">.</span><span class="nx">User</span><span class="p">{},</span> <span class="o">&amp;</span><span class="nx">models</span><span class="p">.</span><span class="nx">Product</span><span class="p">{},</span> <span class="o">&amp;</span><span class="nx">models</span><span class="p">.</span><span class="nx">Order</span><span class="p">{})</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>and connect database in main function</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">database</span><span class="p">.</span><span class="nf">ConnectDb</span><span class="p">()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>click sql tool after download sql vscode plugin, add new connection</p>
+<p>with SQLite plugin in vs code , we can see db table within vs code</p>
+<hr>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">mkdir</span> <span class="nx">routes</span>
+<span class="nx">touch</span> <span class="nx">routes</span><span class="o">/</span><span class="nx">user</span><span class="p">.</span><span class="k">go</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>user.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">routes</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;api/database&#34;</span>
+	<span class="s">&#34;api/models&#34;</span>
+
+	<span class="s">&#34;github.com/gofiber/fiber/v2&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">ID</span> <span class="kt">uint</span> <span class="s">`json:&#34;id&#34;`</span>
+	<span class="nx">FirstName</span> <span class="kt">string</span> <span class="s">`json:&#34;first_name&#34;`</span>
+	<span class="nx">LastName</span> <span class="kt">string</span> <span class="s">`json:&#34;last_name&#34;`</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">CreateResponseUser</span><span class="p">(</span><span class="nx">userModel</span> <span class="nx">models</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span> <span class="nx">User</span><span class="p">{</span>
+	<span class="k">return</span> <span class="nx">User</span><span class="p">{</span><span class="nx">ID</span><span class="p">:</span> <span class="nx">userModel</span><span class="p">.</span><span class="nx">ID</span><span class="p">,</span> <span class="nx">FirstName</span><span class="p">:</span> <span class="nx">userModel</span><span class="p">.</span><span class="nx">FirstName</span><span class="p">,</span> <span class="nx">LastName</span><span class="p">:</span> <span class="nx">userModel</span><span class="p">.</span><span class="nx">LastName</span><span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nf">CreateUser</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">fiber</span><span class="p">.</span><span class="nx">Ctx</span><span class="p">)</span> <span class="kt">error</span><span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">user</span> <span class="nx">models</span><span class="p">.</span><span class="nx">User</span>
+
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">BodyParser</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">404</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+  <span class="p">}</span>
+  <span class="nx">database</span><span class="p">.</span><span class="nx">Database</span><span class="p">.</span><span class="nx">Db</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+  <span class="nx">responseUser</span> <span class="o">:=</span> <span class="nf">CreateResponseUser</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">200</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">responseUser</span><span class="p">);</span>
+<span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>main.go within setupRoutes and in main connect db</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">app</span><span class="p">.</span><span class="nf">Post</span><span class="p">(</span><span class="s">&#34;/api/users&#34;</span><span class="p">,</span><span class="nx">routes</span><span class="p">.</span><span class="nx">CreateUser</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code class="language-console" data-lang="console"> curl localhost:8000/users -X POST -d '{&quot;first_name&quot;:&quot;john&quot;,&quot;last_name&quot;:&quot;doe&quot;}' -H 'content-type:application/json'
+</code></pre><hr>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"> <span class="kd">func</span> <span class="nf">GetUsers</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">fiber</span><span class="p">.</span><span class="nx">Ctx</span><span class="p">)</span> <span class="kt">error</span><span class="p">{</span>
+	 <span class="nx">users</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">models</span><span class="p">.</span><span class="nx">User</span><span class="p">{}</span>
+
+	 <span class="nx">database</span><span class="p">.</span><span class="nx">Database</span><span class="p">.</span><span class="nx">Db</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span> <span class="nx">users</span><span class="p">)</span>
+	 <span class="nx">responseUsers</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">User</span><span class="p">{}</span>
+	 <span class="k">for</span> <span class="nx">_</span><span class="p">,</span><span class="nx">user</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">users</span> <span class="p">{</span>
+		 <span class="nx">responseUser</span> <span class="o">:=</span> <span class="nf">CreateResponseUser</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span>
+		 <span class="nx">responseUsers</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">responseUsers</span><span class="p">,</span> <span class="nx">responseUser</span><span class="p">)</span>
+	 <span class="p">}</span>
+	 <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">200</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">responseUsers</span><span class="p">)</span>
+
+ <span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"> 	<span class="nx">app</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/api/users&#34;</span><span class="p">,</span><span class="nx">routes</span><span class="p">.</span><span class="nx">GetUsers</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code class="language-console" data-lang="console">curl localhost:8000/api/users -X GET
+</code></pre><hr>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">findUser</span><span class="p">(</span><span class="nx">id</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">user</span> <span class="o">*</span><span class="nx">models</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span> <span class="kt">error</span><span class="p">{</span>
+    <span class="nx">database</span><span class="p">.</span><span class="nx">Database</span><span class="p">.</span><span class="nx">Db</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">,</span> <span class="s">&#34;id=?&#34;</span><span class="p">,</span><span class="nx">id</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">user</span><span class="p">.</span><span class="nx">ID</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;user does not exist &#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">GetUser</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">fiber</span><span class="p">.</span><span class="nx">Ctx</span><span class="p">)</span> <span class="kt">error</span><span class="p">{</span>
+	<span class="nx">id</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">ParamsInt</span><span class="p">(</span><span class="s">&#34;id&#34;</span><span class="p">)</span>
+	<span class="kd">var</span> <span class="nx">user</span> <span class="nx">models</span><span class="p">.</span><span class="nx">User</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span><span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">400</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="s">&#34;please enure that :id is an integer&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">findUser</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">user</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">400</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+	<span class="p">}</span>
+
+	<span class="nx">responseUser</span> <span class="o">:=</span> <span class="nf">CreateResponseUser</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">200</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">responseUser</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>and call the function in main function</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">app</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/api/users/:id&#34;</span><span class="p">,</span><span class="nx">routes</span><span class="p">.</span><span class="nx">GetUser</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code class="language-console" data-lang="console">curl localhost:8000/users/2 -X GET
+</code></pre><hr>
+<p>routes/user.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">UpdateUser</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">fiber</span><span class="p">.</span><span class="nx">Ctx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nx">id</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">ParamsInt</span><span class="p">(</span><span class="s">&#34;id&#34;</span><span class="p">)</span>
+
+	<span class="kd">var</span> <span class="nx">user</span> <span class="nx">models</span><span class="p">.</span><span class="nx">User</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">400</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="s">&#34;Please ensure that :id is an integer&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nf">findUser</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">400</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+	<span class="p">}</span>
+
+	<span class="kd">type</span> <span class="nx">UpdateUser</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">FirstName</span> <span class="kt">string</span> <span class="s">`json:&#34;first_name&#34;`</span>
+		<span class="nx">LastName</span>  <span class="kt">string</span> <span class="s">`json:&#34;last_name&#34;`</span>
+	<span class="p">}</span>
+
+	<span class="kd">var</span> <span class="nx">updateData</span> <span class="nx">UpdateUser</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">BodyParser</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">updateData</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">500</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+	<span class="p">}</span>
+
+	<span class="nx">user</span><span class="p">.</span><span class="nx">FirstName</span> <span class="p">=</span> <span class="nx">updateData</span><span class="p">.</span><span class="nx">FirstName</span>
+	<span class="nx">user</span><span class="p">.</span><span class="nx">LastName</span> <span class="p">=</span> <span class="nx">updateData</span><span class="p">.</span><span class="nx">LastName</span>
+
+	<span class="nx">database</span><span class="p">.</span><span class="nx">Database</span><span class="p">.</span><span class="nx">Db</span><span class="p">.</span><span class="nf">Save</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+
+	<span class="nx">responseUser</span> <span class="o">:=</span> <span class="nf">CreateResponseUser</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">200</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">responseUser</span><span class="p">)</span>
+
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>main.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">app</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="s">&#34;/users/:id&#34;</span><span class="p">,</span><span class="nx">routes</span><span class="p">.</span><span class="nx">UpdateUser</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code class="language-console" data-lang="console">curl localhost:8000/users/3 -X PUT -d '{&quot;first_name&quot;:&quot;tom&quot;,&quot;last_name&quot;:&quot;cruse&quot;}' -H 'content-type:application/json'
+</code></pre><hr>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">DeleteUser</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">fiber</span><span class="p">.</span><span class="nx">Ctx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nx">id</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">ParamsInt</span><span class="p">(</span><span class="s">&#34;id&#34;</span><span class="p">)</span>
+
+	<span class="kd">var</span> <span class="nx">user</span> <span class="nx">models</span><span class="p">.</span><span class="nx">User</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">400</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="s">&#34;Please ensure that :id is an integer&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nf">findUser</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">400</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">database</span><span class="p">.</span><span class="nx">Database</span><span class="p">.</span><span class="nx">Db</span><span class="p">.</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">).</span><span class="nx">Error</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">404</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">200</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="s">&#34;Successfully deleted User&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">app</span><span class="p">.</span><span class="nf">DELETE</span><span class="p">(</span><span class="s">&#34;/users/:id&#34;</span><span class="p">,</span><span class="nx">routes</span><span class="p">.</span><span class="nx">DeleteUser</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code class="language-console" data-lang="console">curl localhost:8000/users/3 -X DELETE
+</code></pre><hr>
+<h3 id="routesproductgo">routes/product.go</h3>
+<p>models/product.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">models</span>
+
+<span class="kn">import</span> <span class="s">&#34;time&#34;</span>
+
+<span class="kd">type</span> <span class="nx">Product</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">ID</span>           <span class="kt">uint</span> <span class="s">`json:&#34;id&#34; gorm:&#34;primaryKey&#34;`</span>
+	<span class="nx">CreatedAt</span>    <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+	<span class="nx">Name</span>         <span class="kt">string</span> <span class="s">`json:&#34;name&#34;`</span>
+	<span class="nx">SerialNumber</span> <span class="kt">string</span> <span class="s">`json:&#34;serial_number&#34;`</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>routes/product.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">routes</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;github.com/OzanOcak/fiberapi/database&#34;</span>
+	<span class="s">&#34;github.com/OzanOcak/fiberapi/models&#34;</span>
+	<span class="s">&#34;github.com/gofiber/fiber/v2&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Product</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">ID</span>           <span class="kt">uint</span>   <span class="s">`json:&#34;id&#34;`</span>
+	<span class="nx">Name</span>         <span class="kt">string</span> <span class="s">`json:&#34;name&#34;`</span>
+	<span class="nx">SerialNumber</span> <span class="kt">string</span> <span class="s">`json:&#34;serial_number&#34;`</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">CreateResponseProduct</span><span class="p">(</span><span class="nx">product</span> <span class="nx">models</span><span class="p">.</span><span class="nx">Product</span><span class="p">)</span> <span class="nx">Product</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">Product</span> <span class="p">{</span><span class="nx">ID</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">ID</span><span class="p">,</span> <span class="nx">Name</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">SerialNumber</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">SerialNumber</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">CreateProduct</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">fiber</span><span class="p">.</span><span class="nx">Ctx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">product</span> <span class="nx">models</span><span class="p">.</span><span class="nx">Product</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">BodyParser</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">product</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">400</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+	<span class="p">}</span>
+
+	<span class="nx">database</span><span class="p">.</span><span class="nx">Database</span><span class="p">.</span><span class="nx">Db</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">product</span><span class="p">)</span>
+	<span class="nx">responseProduct</span> <span class="o">:=</span> <span class="nf">CreateResponseProduct</span><span class="p">(</span><span class="nx">product</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">200</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">responseProduct</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>main.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">app</span><span class="p">.</span><span class="nf">Post</span><span class="p">(</span><span class="s">&#34;/products&#34;</span><span class="p">,</span><span class="nx">routes</span><span class="p">.</span><span class="nx">CreateProduct</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>terminal</p>
+<pre><code class="language-console" data-lang="console"> curl localhost:8000/products -X POST -d '{&quot;serial_number&quot;:&quot;0002316&quot;,&quot;name&quot;:&quot;Letrange&quot;}' -H 'content-type:application/json'
+</code></pre><hr>
+<p>product.go</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">GetProducts</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">fiber</span><span class="p">.</span><span class="nx">Ctx</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nx">products</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">models</span><span class="p">.</span><span class="nx">Product</span><span class="p">{}</span>
+	<span class="nx">database</span><span class="p">.</span><span class="nx">Database</span><span class="p">.</span><span class="nx">Db</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">products</span><span class="p">)</span>
+	<span class="nx">responseProducts</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">Product</span><span class="p">{}</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">product</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">products</span> <span class="p">{</span>
+		<span class="nx">responseProduct</span> <span class="o">:=</span> <span class="nf">CreateResponseProduct</span><span class="p">(</span><span class="nx">product</span><span class="p">)</span>
+		<span class="nx">responseProducts</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">responseProducts</span><span class="p">,</span> <span class="nx">responseProduct</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Status</span><span class="p">(</span><span class="mi">200</span><span class="p">).</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">responseProducts</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">app</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/products&#34;</span><span class="p">,</span><span class="nx">routes</span><span class="p">.</span><span class="nx">GetProducts</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code class="language-console" data-lang="console">curl localhost:8000/products
+</code></pre><hr>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">app</span><span class="p">.</span><span class="nf">Post</span><span class="p">(</span><span class="s">&#34;/orders&#34;</span><span class="p">,</span><span class="nx">routes</span><span class="p">.</span><span class="nx">CreateOrder</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code class="language-console" data-lang="console">curl localhost:8000/orders -X POST -d '{&quot;user_id&quot;:4,&quot;product_id&quot;:1}' -H 'content-type:application/json'
+</code></pre><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">app</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/orders&#34;</span><span class="p">,</span><span class="nx">routes</span><span class="p">.</span><span class="nx">GetOrders</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code class="language-console" data-lang="console">curl localhost:8000/orders
+</code></pre><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">app</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/orders/:id&#34;</span><span class="p">,</span><span class="nx">routes</span><span class="p">.</span><span class="nx">GetOrder</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code class="language-console" data-lang="console">curl localhost:8000/orders/1
+</code></pre>
+    </div>
+</div>
+
+<div class="container">
+    
+    <nav class="flex container suggested">
+        
+        <a rel="prev" href="/post/curl/" title="Previous post (older)">
+            <span>Previous</span>
+            cURL for CRUD 
+            </a>
+        
+        
+        
+    </nav>
+    
+</div>
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://github.com/OzanOcak">Github</a>
+            
+        </nav>
+    </section>
+    
+    <script async src="/js/features.min.c5d8f3350f5a652f526b982306299353824299adb7a3bd261ecffacc47087f66.js"></script>
+</footer>
+    </body>
+</html>

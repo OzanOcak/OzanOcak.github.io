@@ -154,24 +154,77 @@ tar -czvf files.tgz file1 file2   //zipped file (the least kb)
 tar -xzvf files.tgz  // to extract them
 </code></pre><hr>
 <h2 id="curl">cURL</h2>
-<pre><code class="language-console" data-lang="console">
-curl localhost:3000/dogs  //implicit get request
-curl localhost:3000/dogs -X GET  // -o /folder/x.html
-curl localhost:3000/dogs -X POST -d '{&quot;name&quot;:&quot;erbash&quot;, &quot;bred&quot;:&quot;bulldog&quot;}' -H 'content-type: application/json'
-echo $? // to check if returns 0
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sh" data-lang="sh">curl localhost:3000/dogs  <span class="c1">#implicit get request</span>
+curl localhost:3000/dogs -X GET  <span class="c1"># -o /folder/x.html</span>
+curl localhost:3000/dogs -X POST -d <span class="s1">&#39;{&#34;name&#34;:&#34;erbash&#34;, &#34;bred&#34;:&#34;bulldog&#34;}&#39;</span> -H <span class="s1">&#39;content-type: application/json&#39;</span>
+<span class="nb">echo</span> <span class="nv">$?</span> <span class="c1"># to check if returns 0</span>
 
-vim data.json // {&quot;name&quot;:&quot;jojo&quot;,&quot;bred&quot;:&quot;papillion&quot;}
-curl localhost:3000/dogs -d @data.json -H 'content-type: application/json'  // -v (verbose)
-curl localhost:3000/dogs -o /dev/dogs/data  // -w '%{response_code}'
+vim data.json <span class="c1"># {&#34;name&#34;:&#34;jojo&#34;,&#34;bred&#34;:&#34;papillion&#34;}</span>
+curl localhost:3000/dogs -d @data.json -H <span class="s1">&#39;content-type: application/json&#39;</span>  // -v <span class="o">(</span>verbose<span class="o">)</span>
+curl localhost:3000/dogs -o /dev/dogs/data  <span class="c1"># -w &#39;%{response_code}&#39;</span>
 
-curl -v localhost:8080/admin // with verbose will get 401 not authorized
+curl -v localhost:8080/admin <span class="c1"># with verbose will get 401 not authorized</span>
 curl localhost:8080/admin -u admin:secret_psswd   username:password
-curl -I localhost:3000/dogs -X GET  // -I to get header, -L to redirect
+curl -I localhost:3000/dogs -X GET  <span class="c1"># -I to get header, -L to redirect</span>
 
 curl localhost:3000/dogs -X GET  -o /folder/x.html
-
-curl localhost:3000/dogs -X GET  -v // you can read all the handshakes,certificates and html
-</code></pre>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="update">update</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sh" data-lang="sh">curl localhost:8000/users/3 -X PUT -d <span class="s1">&#39;{&#34;first_name&#34;:&#34;tom&#34;,&#34;last_name&#34;:&#34;cruse&#34;}&#39;</span> -H <span class="s1">&#39;content-type:application/json&#39;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="get">get</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sh" data-lang="sh">curl localhost:3000/dogs -X GET  -v <span class="c1"># you can read all the handshakes,certificates and html</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="update-1">update</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sh" data-lang="sh">curl localhost:8000/users/3 -X PUT -d <span class="s1">&#39;{&#34;first_name&#34;:&#34;tom&#34;,&#34;last_name&#34;:&#34;cruse&#34;}&#39;</span> -H <span class="s1">&#39;content-type:application/json&#39;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="delete">delete</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sh" data-lang="sh">curl localhost:8000/users/3 -X DELETE
+</code></pre></td></tr></table>
+</div>
+</div>
     </div>
 </div>
 
@@ -185,6 +238,11 @@ curl localhost:3000/dogs -X GET  -v // you can read all the handshakes,certifica
             </a>
         
         
+        
+        <a rel="next" href="/post/gosqlite/" title="Next post (newer)">
+            <span>Next</span>
+            API with Golang and Sqlite
+            </a> 
         
     </nav>
     

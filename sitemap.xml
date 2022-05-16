@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://bitsandbytes.github.io/tags/css/</loc>
+    <lastmod>2022-05-16T00:05:06-04:00</lastmod>
+  </url><url>
+    <loc>https://bitsandbytes.github.io/tags/dom/</loc>
+    <lastmod>2022-05-16T00:05:06-04:00</lastmod>
+  </url><url>
+    <loc>https://bitsandbytes.github.io/tags/html/</loc>
+    <lastmod>2022-05-16T00:05:06-04:00</lastmod>
+  </url><url>
+    <loc>https://bitsandbytes.github.io/tags/javascript/</loc>
+    <lastmod>2022-05-16T00:05:06-04:00</lastmod>
+  </url><url>
+    <loc>https://bitsandbytes.github.io/post/</loc>
+    <lastmod>2022-05-16T00:05:06-04:00</lastmod>
+  </url><url>
+    <loc>https://bitsandbytes.github.io/tags/</loc>
+    <lastmod>2022-05-16T00:05:06-04:00</lastmod>
+  </url><url>
+    <loc>https://bitsandbytes.github.io/post/virtualization_list/</loc>
+    <lastmod>2022-05-16T00:05:06-04:00</lastmod>
+  </url><url>
+    <loc>https://bitsandbytes.github.io/</loc>
+    <lastmod>2022-05-16T00:05:06-04:00</lastmod>
+  </url><url>
+    <loc>https://bitsandbytes.github.io/tags/web-development/</loc>
+    <lastmod>2022-05-16T00:05:06-04:00</lastmod>
+  </url><url>
     <loc>https://bitsandbytes.github.io/tags/api/</loc>
     <lastmod>2022-05-10T00:05:06-04:00</lastmod>
   </url><url>
@@ -17,19 +44,7 @@
     <loc>https://bitsandbytes.github.io/tags/go/</loc>
     <lastmod>2022-05-10T00:05:06-04:00</lastmod>
   </url><url>
-    <loc>https://bitsandbytes.github.io/post/</loc>
-    <lastmod>2022-05-10T00:05:06-04:00</lastmod>
-  </url><url>
     <loc>https://bitsandbytes.github.io/tags/sqlite/</loc>
-    <lastmod>2022-05-10T00:05:06-04:00</lastmod>
-  </url><url>
-    <loc>https://bitsandbytes.github.io/tags/</loc>
-    <lastmod>2022-05-10T00:05:06-04:00</lastmod>
-  </url><url>
-    <loc>https://bitsandbytes.github.io/</loc>
-    <lastmod>2022-05-10T00:05:06-04:00</lastmod>
-  </url><url>
-    <loc>https://bitsandbytes.github.io/tags/web-development/</loc>
     <lastmod>2022-05-10T00:05:06-04:00</lastmod>
   </url><url>
     <loc>https://bitsandbytes.github.io/post/curl/</loc>

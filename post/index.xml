@@ -6,7 +6,17 @@
     <description>Recent content in Posts on Warm journeys of bits and bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 10 May 2022 00:05:06 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 16 May 2022 00:05:06 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Virtualization creating list</title>
+      <link>https://bitsandbytes.github.io/post/virtualization_list/</link>
+      <pubDate>Mon, 16 May 2022 00:05:06 -0400</pubDate>
+      
+      <guid>https://bitsandbytes.github.io/post/virtualization_list/</guid>
+      <description>Virtualization creating list Firstly we need to crate index.html where we should link css and javascript files
+1 2 3 4 5 6 7 8  &amp;lt;html lang=&amp;#34;en&amp;#34;&amp;gt; &amp;lt;head&amp;gt; &amp;lt;link rel=&amp;#34;stylesheet&amp;#34; href=&amp;#34;style.css&amp;#34; /&amp;gt; &amp;lt;/head&amp;gt; &amp;lt;body&amp;gt; &amp;lt;script src=&amp;#34;./main.js&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt;   Then we need a text input to receive the texts, a button to bind function to pass the text to dom by creating html elements an unordered list where we can insert list element in.</description>
+    </item>
+    
     <item>
       <title>API with Golang and Sqlite</title>
       <link>https://bitsandbytes.github.io/post/gosqlite/</link>

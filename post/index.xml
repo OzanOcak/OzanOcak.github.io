@@ -126,5 +126,14 @@ Makefile We first need to specify the environment for booting in config.txt and 
 I chose Hugo to this blog and store it in github as a static page. First I install hugo with brew then create 2 seperate github repository; one for all the source codes and the other for staic files in public folder.</description>
     </item>
     
+    <item>
+      <title></title>
+      <link>https://bitsandbytes.github.io/post/descartesandspread/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bitsandbytes.github.io/post/descartesandspread/</guid>
+      <description>Descartes and Necessity of Spread Operator Descartes believed dualism of mind and body, they couldn&amp;rsquo;t have the same origin since while body is divisible, mind is not, which means they have at least one difference. Let&amp;rsquo;s think the two same pencils are produced in the factory, everything are the same but they are positions so they are not exactly same. if everything would be same , they come together and become one single object.</description>
+    </item>
+    
   </channel>
 </rss>

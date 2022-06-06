@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>Warm journeys of bits and bytes</title>
+    
+    
+    
+    <link rel="stylesheet" href="/sass/main.min.1a3290acca8b3fc92df85ea9200859476d6c80d59009c89a749300f3ce7a7a67.css">
+</head>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="flex">
+            <div>
+                <a class="brand" href="/">
+                    
+                    Warm journeys of bits and bytes
+                    </a>
+            </div>
+            <div class="flex">
+                
+                <a href="/about/">About</a>
+                
+                <button id="dark-mode-button"></button>
+            </div>
+            </div>
+    </div>
+</nav>
+        <main>
+            
+
+<div class="container">
+    <article>
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1></h1>
+                    <div class="post-meta">
+                        <div>
+                            By  on <time>January 01, 0001</time>
+                        </div>
+                        <div class="tags">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </article>
+
+    <div class="article-post">
+    <h2 id="descartes-and-necessity-of-spread-operator">Descartes and Necessity of Spread Operator</h2>
+<p>Descartes believed dualism of mind and body, they couldn&rsquo;t have the same origin since while body is divisible, mind is not, which means they have at least one difference.
+Let&rsquo;s think the two same pencils are produced in the factory, everything are the same but they are positions so they are not exactly same. if everything would be same , they come together and become one single object.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">===</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+  <span class="o">?</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;they are same&#34;</span><span class="p">)</span>
+  <span class="o">:</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;they are not same&#34;</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Above code snippet is exact replicate of two pencils thought. Javascript Engine located in the browsers is a compiler of the javascript language that handle memory management and garbage collection. Since javascript is dynamically typed language, when below code
+is executed, the engine dynamically allocate two same arrays in a different locations and eventually the code will return <strong>they are not same</strong>.</p>
+<p>Javascript has many logical design errors and typescript doesn&rsquo;t catch them. This same but actually different objects are one of them. I recently learned react.js and the react library relies on keeping states in every steps. Then they compare to values of the states, if there is change, they will update and render the virtual virtual dom .</p>
+<p>The problem is if we pass an array or an object which is also dynamically allocated in heap by the engine, react library will not recognize any change because they will pass by reference since they are allocated in the heap.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="k">try</span> <span class="p">{</span>
+      <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="kr">await</span> <span class="nx">api</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="sb">`/posts/</span><span class="si">${</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span> <span class="nx">updatedPost</span><span class="p">);</span>
+      <span class="nx">setPosts</span><span class="p">(</span>
+        <span class="nx">posts</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">post</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">post</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span> <span class="o">?</span> <span class="p">{</span> <span class="p">...</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span> <span class="p">}</span> <span class="o">:</span> <span class="nx">post</span><span class="p">))</span>
+      <span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>This is an async updating data operation; the updated data is assigned to response.
+in the second line we map all the posts one by one to find the updated post&rsquo;s id, if we find id we can update it, but as mentioned, we are passing exact data itself by reference, response is just a tag. that&rsquo;s where spread operator comes to play and duplicate the state now react can render the dom.</p>
+<p>It is like a computer and electricity that gives mind to the computer. While computer is made of transistors, metals,cables and plastics. Electricity is moving sub atomic particles is assumably exist, forming the energy around and giving it back later.Descartes might be right.It seems to me that mind and body might be dual &hellip;</p>
+
+    </div>
+</div>
+
+<div class="container">
+    
+    <nav class="flex container suggested">
+        
+        
+        
+        <a rel="next" href="/post/article1/" title="Next post (newer)">
+            <span>Next</span>
+            How did I build this website?
+            </a> 
+        
+    </nav>
+    
+</div>
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://github.com/OzanOcak">Github</a>
+            
+        </nav>
+    </section>
+    
+    <script async src="/js/features.min.c5d8f3350f5a652f526b982306299353824299adb7a3bd261ecffacc47087f66.js"></script>
+</footer>
+    </body>
+</html>

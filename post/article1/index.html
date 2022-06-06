@@ -87,7 +87,7 @@ hugo new site my_blog
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">git init .
 
-<span class="nb">cd</span> my_blog/themes 
+<span class="nb">cd</span> my_blog/themes
 
 git submodule add https://github.com/WingLim/hugo-tania
 </code></pre></td></tr></table>
@@ -107,7 +107,7 @@ git submodule add https://github.com/WingLim/hugo-tania
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">mv config.toml config.yaml
 
-vim config.yaml 
+vim config.yaml
 
 baseURL: <span class="s2">&#34;https://bitsandbytes.github.io&#34;</span>
 languageCode: <span class="s2">&#34;en-us&#34;</span>
@@ -149,8 +149,8 @@ git checkout -b main <span class="o">(</span>now it is master branch<span class=
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">touch readme.md 
-git add . 
+<pre class="chroma"><code class="language-bash" data-lang="bash">touch readme.md
+git add .
 git commit -m <span class="s2">&#34;readme.md&#34;</span>
 push -u origin main
 
@@ -159,8 +159,8 @@ git submodule  add -b main ozanocak.github.io.git public
 hugo -t hugo-tania
 </code></pre></td></tr></table>
 </div>
-</div><p>when I cd public &amp; git remote -v , I see origin is the host directory because I branched&amp;pushed it already to the repository.Finaly I can add changes git.</p>
-<p>When I need to update the website, I need to go to directory where yaml config file located to generate updated binary files  and push the changes to github page.</p>
+</div><p>when I cd public &amp; git remote -v , I see origin is the host directory because I branched&amp;pushed it already to the repository.Finally I can add changes git.</p>
+<p>When I need to update the website, I need to go to directory where yaml config file located to generate updated binary files and push the changes to github page.</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
@@ -195,6 +195,11 @@ hugo server -D
 <div class="container">
     
     <nav class="flex container suggested">
+        
+        <a rel="prev" href="/post/descartesandspread/" title="Previous post (older)">
+            <span>Previous</span>
+            
+            </a>
         
         
         

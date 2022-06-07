@@ -62,8 +62,8 @@
 
     <div class="article-post">
     <h2 id="descartes-and-necessity-of-spread-operator">Descartes and Necessity of Spread Operator</h2>
-<p>Descartes believed dualism of mind and body, they couldn&rsquo;t have the same origin since while body is divisible, mind is not, which means they have at least one difference.
-Let&rsquo;s think the two same pencils are produced in the factory, everything are the same but they are positions so they are not exactly same. if everything would be same , they come together and become one single object.</p>
+<p>Descartes believed dualism of mind and body,he thought they couldn&rsquo;t have the same origin since body is divisible,while mind is not; only one difference was enough to make two different objects.
+Let&rsquo;s think the two same pencils are produced in the factory, everything are the same but their positions in the world so they are not exactly same. if everything would be same , they would come together and become one single object.</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
@@ -76,9 +76,9 @@ Let&rsquo;s think the two same pencils are produced in the factory, everything a
   <span class="o">:</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;they are not same&#34;</span><span class="p">);</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>Above code snippet is exact replicate of two pencils thought. Javascript Engine located in the browsers is a compiler of the javascript language that handle memory management and garbage collection. Since javascript is dynamically typed language, when below code
+</div><p>Above code snippet is exact replicate of two pencils thought. Javascript Engine located in the browsers is a compiler of the javascript language that handle memory management and garbage collection. Since javascript is dynamically typed language, when above code
 is executed, the engine dynamically allocate two same arrays in a different locations and eventually the code will return <strong>they are not same</strong>.</p>
-<p>Javascript has many logical design errors and typescript doesn&rsquo;t catch them. This same but actually different objects are one of them. I recently learned react.js and the react library relies on keeping states in every steps. Then they compare to values of the states, if there is change, they will update and render the virtual virtual dom .</p>
+<p>Javascript has some problems because of the design of the language and even typescript doesn&rsquo;t catch them. The same value but actually different objects are one of them. I recently learned react.js and the react library relies on creating a new states in every steps. Then they compare to values of the states, if there is change, they will update and render the virtual virtual dom .</p>
 <p>The problem is if we pass an array or an object which is also dynamically allocated in heap by the engine, react library will not recognize any change because they will pass by reference since they are allocated in the heap.</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">

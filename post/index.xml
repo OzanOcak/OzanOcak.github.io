@@ -6,7 +6,19 @@
     <description>Recent content in Posts on Warm journeys of bits and bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 06 Jun 2022 00:05:06 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 01 Aug 2022 00:05:06 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How to Install tailwindcss and typescript in Next project</title>
+      <link>https://bitsandbytes.github.io/post/nextjs1/</link>
+      <pubDate>Mon, 01 Aug 2022 00:05:06 -0400</pubDate>
+      
+      <guid>https://bitsandbytes.github.io/post/nextjs1/</guid>
+      <description>How to create Next Js project with Typescript and tailwindcss We can create next app with yarn include &amp;ndash;typescript in the end if we want tsx files.
+yarn create next-app rentalapp --typescript cd rentalapp yarn add -D tailwindcss postcss autoprefixer npx tailwindcss init -p by executing npx tailwind creates 2 config files
+tailwind.config.js
+1 2 3 4 5 6 7 8 9 10  module.exports = { content: [ &amp;#34;./pages/**/*.{js,ts,jsx,tsx}&amp;#34;, &amp;#34;.</description>
+    </item>
+    
     <item>
       <title>Memory Management in JavaScript and Necessity of Spread Operator in React</title>
       <link>https://bitsandbytes.github.io/post/descartes/</link>

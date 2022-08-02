@@ -6,7 +6,17 @@
     <description>Recent content in Posts on Warm journeys of bits and bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 01 Aug 2022 00:05:06 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 02 Aug 2022 00:05:06 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SSG and SSR in Next project</title>
+      <link>https://bitsandbytes.github.io/post/rendering_in_next/</link>
+      <pubDate>Tue, 02 Aug 2022 00:05:06 -0400</pubDate>
+      
+      <guid>https://bitsandbytes.github.io/post/rendering_in_next/</guid>
+      <description>Statically Generated Pages in Server getStaticProps method must return an object created in build time in server, since the page is statically created it will be very fast loaded. We can see loading in Network/ waterfall.
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15  export const getStaticProps = () =&amp;gt; { return { props: { name: &amp;#34;ozan&amp;#34;, }, }; }; const Post = ({ name }) =&amp;gt; { return ( &amp;lt;div&amp;gt; &amp;lt;h1&amp;gt;Post by {name}&amp;lt;/h1&amp;gt; &amp;lt;/div&amp;gt; ); }; export default Post;   We can fetch data from API and create the page in server.</description>
+    </item>
+    
     <item>
       <title>How to Install tailwindcss and typescript in Next project</title>
       <link>https://bitsandbytes.github.io/post/nextjs1/</link>

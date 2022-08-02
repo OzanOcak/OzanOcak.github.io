@@ -6,13 +6,22 @@
     <description>Recent content in Tags on Warm journeys of bits and bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 01 Aug 2022 00:05:06 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 02 Aug 2022 00:05:06 -0400</lastBuildDate><atom:link href="https://bitsandbytes.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>NextJs</title>
       <link>https://bitsandbytes.github.io/tags/nextjs/</link>
-      <pubDate>Mon, 01 Aug 2022 00:05:06 -0400</pubDate>
+      <pubDate>Tue, 02 Aug 2022 00:05:06 -0400</pubDate>
       
       <guid>https://bitsandbytes.github.io/tags/nextjs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>web development</title>
+      <link>https://bitsandbytes.github.io/tags/web-development/</link>
+      <pubDate>Tue, 02 Aug 2022 00:05:06 -0400</pubDate>
+      
+      <guid>https://bitsandbytes.github.io/tags/web-development/</guid>
       <description></description>
     </item>
     
@@ -31,15 +40,6 @@
       <pubDate>Mon, 01 Aug 2022 00:05:06 -0400</pubDate>
       
       <guid>https://bitsandbytes.github.io/tags/typescript/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>web development</title>
-      <link>https://bitsandbytes.github.io/tags/web-development/</link>
-      <pubDate>Mon, 01 Aug 2022 00:05:06 -0400</pubDate>
-      
-      <guid>https://bitsandbytes.github.io/tags/web-development/</guid>
       <description></description>
     </item>
     
